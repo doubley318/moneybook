@@ -1,0 +1,45 @@
+<navigation-bar title="数据管理" color="#111111" background="transparent"></navigation-bar>
+
+<view class="data-page">
+  <view class="data-card">
+    <view
+      class="data-row"
+      wx:for="{{actions}}"
+      wx:key="key"
+      data-key="{{item.key}}"
+      data-label="{{item.label}}"
+      bindtap="handleAction"
+      hover-class="tap-active"
+      hover-stay-time="80"
+    >
+      <text>{{item.label}}</text>
+      <view class="row-arrow"></view>
+    </view>
+  </view>
+
+  <view class="dialog-mask" wx:if="{{showClearDataDialog}}">
+    <view class="clear-dialog">
+      <view class="dialog-title">清空数据</view>
+      <view class="dialog-text">将全部礼金记录移入回收站</view>
+      <view class="dialog-actions">
+        <view class="dialog-button cancel" bindtap="closeClearDataDialog">取消</view>
+        <view class="dialog-button confirm {{clearing ? 'disabled' : ''}}" bindtap="confirmClearData">
+          确定
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="dialog-mask" wx:if="{{showExportDialog}}" bindtap="closeExportDialog">
+    <view class="export-dialog" catchtap="noop">
+      <view class="dialog-title">导出数据</view>
+      <view class="dialog-text">请选择表格的下载方式</view>
+      <view class="dialog-actions">
+        <view class="dialog-button export-action" bindtap="downloadLocal">本地下载</view>
+        <view class="dialog-button export-action" bindtap="sendToFriend">发送给好友</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="export-toast" wx:if="{{showExportToast}}">表格生成中...</view>
+</view>

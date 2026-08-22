@@ -1,0 +1,37 @@
+<navigation-bar title="使用帮助" color="#111111" background="transparent"></navigation-bar>
+
+<view class="help-page">
+  <scroll-view class="help-scroll" scroll-y enhanced show-scrollbar="{{false}}">
+    <view class="help-card intro-card">
+      <image class="intro-icon" src="/assets/icons/help-wallet.svg" mode="aspectFit"></image>
+      <view class="help-card-title">一款帮你记录人情来往的小工具</view>
+    </view>
+
+    <view class="help-card operation-card">
+      <view class="help-section-title">基础操作</view>
+      <view
+        class="operation-item"
+        wx:for="{{basicOperations}}"
+        wx:key="title"
+        wx:for-item="item"
+      >
+        <view class="operation-title">{{item.title}}</view>
+        <view class="operation-step" wx:for="{{item.steps}}" wx:key="*this" wx:for-item="step">{{step}}</view>
+      </view>
+    </view>
+
+    <view class="help-card faq-card">
+      <view class="help-section-title">常见问题</view>
+      <view
+        class="faq-item"
+        wx:for="{{faqs}}"
+        wx:key="question"
+        wx:for-item="item"
+      >
+        <view class="faq-question">{{item.question}}</view>
+        <view class="faq-answer">{{item.answer}}</view>
+      </view>
+    </view>
+    <view class="help-bottom-space"></view>
+  </scroll-view>
+</view>

@@ -1,0 +1,596 @@
+# 项目结构说明
+
+这个项目是一个微信小程序，定位是“礼金/礼物/请客往来记录本”。当前代码主要是小程序原生页面、组件、样式和本地 JS 数据层，没有 npm 依赖、后端接口或云开发接入。用户新建记录会先写入微信本地缓存，并同步驱动首页、统计页、联系人页等页面展示。
+
+后续 AI 或开发者接手任务前，建议先读本文件，再按需查看对应页面、组件和数据文件。
+
+## 技术栈与运行形态
+
+- 平台：微信小程序
+- 框架：原生 `Page` / `Component`
+- 视图：WXML
+- 样式：WXSS
+- 数据：本地 JS 数据层 + 微信本地缓存
+- 渲染器：Skyline
+- 组件框架：Glass-easel
+- 自定义导航：已开启，`navigationStyle: "custom"`
+- 组件懒加载：`lazyCodeLoading: "requiredComponents"`
+
+核心配置在 `app.json`，项目配置在 `project.config.json`。
+
+## 顶层目录
+
+```text
+.
+├─ app.js
+├─ app.json
+├─ app.wxss
+├─ project.config.json
+├─ project.private.config.json
+├─ sitemap.json
+├─ assets/
+│  └─ icons/
+├─ data/
+│  ├─ records.js
+│  └─ contacts.js
+├─ pages/
+│  ├─ index/
+│  ├─ stats/
+│  │  └─ records/
+│  ├─ create/
+│  │  └─ edit/
+│  ├─ contacts/
+│  │  ├─ detail/
+│  │  └─ edit/
+│  ├─ mine/
+│  ├─ records/
+│  │  ├─ detail/
+│  │  └─ edit/
+└─ components/
+   ├─ navigation-bar/
+   ├─ app-tabbar/
+   ├─ record-type-filter/
+   └─ record-group-list/
+```
+
+## 页面路由
+
+页面注册顺序来自 `app.json`：
+
+1. `pages/index/index`：首页
+2. `pages/stats/stats`：统计页
+3. `pages/create/create`：新建记录入口页
+4. `pages/create/edit/edit`：新建记录编辑页
+5. `pages/contacts/contacts`：联系人列表页
+6. `pages/contacts/detail/detail`：联系人详情页
+7. `pages/contacts/edit/edit`：联系人编辑页
+8. `pages/mine/mine`：我的页
+9. `pages/records/records`：全部记录页
+10. `pages/records/detail/detail`：记录详情页
+11. `pages/records/edit/edit`：记录编辑页
+12. `pages/stats/records/records`：统计页来往记录明细页
+13. `pages/mine/about/about`：关于我们页
+14. `pages/mine/about/version/version`：版本号页
+15. `pages/mine/about/help`：使用帮助页
+16. `pages/mine/data/data`：数据管理页
+17. `pages/mine/data/trash`：回收站页
+18. `pages/mine/feedback/feedback`：意见反馈页
+19. `pages/mine/profile/edit/edit`：个人信息编辑页
+20. `pages/mine/settings/settings`：系统设置页
+21. `pages/mine/settings/agreement/agreement`：用户协议页
+22. `pages/mine/settings/privacy/privacy`：隐私政策页
+
+## 数据层
+
+### `data/records.js`
+
+维护礼金、礼物、请客记录列表。运行时会清空原型占位记录，只展示用户通过新建页保存到本地缓存的记录，以及当前会话中新建的记录。
+
+主要导出：
+
+- `records`：记录数组
+- `addRecord(record)`：新增一条记录，写入运行时记录数组和微信本地缓存
+- `findRecordById(id)`：按记录 ID 查找详情，找不到时返回 `undefined`
+- `getRecordById(id)`：按记录 ID 查找详情，找不到时返回第一条记录
+- `getYearGroups(sourceRecords = records)`：把记录按年份和日期分组，供全部记录页展示
+- `moveRecordToTrash(id)`：把指定记录移入回收站并写入本地缓存
+- `getTrashRecords()`：读取回收站记录
+- `restoreRecordsFromTrash(ids)`：从回收站恢复指定记录
+- `deleteTrashRecords(ids)`：从回收站永久删除指定记录
+
+记录对象大致字段：
+
+```js
+{
+  id,
+  type,
+  typeKey,      // cash | gift | meal
+  name,
+  date,
+  fullDate,
+  dateLabel,
+  year,
+  scene,
+  value,
+  valueClass,   // income | expense
+  amountLabel,
+  remark
+}
+```
+
+### `data/contacts.js`
+
+根据 `data/records.js` 中的当前记录动态派生联系人分组和联系人详情；联系人不再维护独立的占位列表。联系人改名会通过微信本地缓存保存显示名映射，统计和来往条目仍来自记录数据。
+
+主要导出：
+
+- `getContactGroups()`：按字母分组生成联系人列表
+- `getContacts()`：生成扁平联系人列表
+- `getContactDetail(id)`：按联系人 ID 查详情，找不到时返回 `null`
+- `getContactRecordById(id)`：按联系人详情里的来往条目 ID 查找并转换成记录详情页可用的数据
+- `updateContactName(id, name)`：更新联系人姓名，并写入微信本地缓存
+
+联系人详情中有 `total` 汇总和 `records` 往来条目。
+
+## 页面职责
+
+### `pages/index`
+
+首页。展示来往统计卡片和最近记录。
+
+依赖：
+
+- `data/records.js`
+- `components/navigation-bar`
+- `components/app-tabbar`
+- `components/record-group-list`
+
+主要跳转：
+
+- `goAllRecords()` 跳到全部记录页
+- `goRecordDetail(event)` 跳到记录详情页
+
+注意：首页会在 `onShow()` 重新读取 `records`，所以新建记录、删除记录或恢复记录后返回首页会刷新统计和最近记录。
+
+### `pages/records`
+
+全部记录页。支持按类型筛选记录、按时间正序/倒序排序，并按年份、日期分组展示。
+
+依赖：
+
+- `data/records.js`
+- `components/navigation-bar`
+- `components/record-type-filter`
+- `components/record-group-list`
+
+核心逻辑：
+
+- `selectedType` 控制筛选类型
+- `selectedSort` 控制时间排序方向，默认倒序
+- `refreshRecords()` 根据类型过滤记录，再按 `fullDate` 排序
+- `getYearGroups()` 生成页面展示结构
+
+### `pages/records/detail`
+
+记录详情页。通过 URL 参数 `id` 查询本地记录并展示。
+
+依赖：
+
+- `data/records.js`
+- `components/navigation-bar`
+
+注意：
+
+- `editRecord()` 跳到记录编辑页，并通过 URL 参数传递当前记录 ID
+- 删除记录确认后会调用 `moveRecordToTrash(id)`，把记录移入回收站并返回上一页。
+
+### `pages/records/edit`
+
+记录编辑页。由记录详情页“编辑记录”按钮进入，自动填充当前记录内容。
+
+依赖：
+
+- `data/records.js`
+
+核心逻辑：
+
+- URL 参数 `id` 查询记录详情并填充表单
+- `activeType` 固定当前记录大类：`cash`、`gift`、`meal`
+- `giftType` 根据 `valueClass` 映射为收礼或送礼
+- 礼金记录填充金额，礼物记录填充礼物，请客记录填充请客内容
+- 保留日期选择器和最多 3 张图片选择
+
+注意：`saveRecord()` 目前只弹出“记录修改待接入”的 toast，没有真实写入 `data/records.js`，也没有本地缓存或后端提交。
+
+### `pages/stats`
+
+统计页。按礼金、礼物、请客三个分类展示统计摘要、柱状图和年度表格。
+
+依赖：
+
+- `data/records.js`
+- `components/navigation-bar`
+- `components/app-tabbar`
+
+核心逻辑：
+
+- `categories` 定义三个统计类别
+- `selectedYear` 控制统计图和来往记录按全部年份或指定年份筛选，默认全部年份
+- `buildStats(activeKey, selectedYear)` 根据 `records` 计算统计数据
+- 金额类按数值正负计算收到/送出
+- 礼物和请客类按 `valueClass` 计算收到/送出次数
+
+注意：`switchCategory()` 使用 `wx.redirectTo` 重新进入统计页，并带上 `type` 参数。
+
+### `pages/stats/records`
+
+统计页来往记录明细页。由统计页“来往记录”模块点击年份或月份进入，按当前统计分类和时间范围展示记录条目。
+
+依赖：
+
+- `data/records.js`
+- `components/navigation-bar`
+- `components/record-group-list`
+
+核心逻辑：
+
+- URL 参数 `type` 控制记录类型：`cash`、`gift`、`meal`
+- URL 参数 `period` 控制时间范围：年份如 `2025`，月份如 `2025-11`
+- 记录按 `fullDate` 时间倒序排序
+- 点击记录条目跳转到 `pages/records/detail/detail`
+
+### `pages/create`
+
+新建记录入口页。展示礼金、礼物、请客三个入口卡片，点击后进入新建记录编辑页，并通过 URL 参数 `type` 指定初始类型。
+
+依赖：
+
+- `components/navigation-bar`
+- `components/app-tabbar`
+
+核心逻辑：
+
+- `goCreateEdit(event)` 读取入口卡片的 `data-type`
+- 跳转到 `pages/create/edit/edit?type=cash|gift|meal`
+
+### `pages/create/edit`
+
+新建记录编辑页。支持礼金、礼物、请客三种类型的表单切换，内置日期选择器和图片选择。
+
+核心逻辑：
+
+- `activeType` 控制当前表单类型
+- `giftType` 控制收礼/送礼
+- `form` 保存输入字段
+- `calendarDays` 生成 6 行日历网格
+- `chooseImage()` 最多选择 3 张图片
+
+注意：`saveRecord()` 会调用 `addRecord()` 写入运行时记录和微信本地缓存，显示“保存成功”toast 后返回新建入口页。当前仍未接入后端或云开发。
+
+### `pages/contacts`
+
+联系人列表页。根据当前记录动态展示按字母分组的联系人，支持按姓名、往来次数、金额搜索。
+
+依赖：
+
+- `data/contacts.js`
+- `components/navigation-bar`
+- `components/app-tabbar`
+
+核心逻辑：
+
+- `keyword` 保存搜索词
+- `suggestions` 保存最多 6 条搜索建议
+- `onShow()` 会重新从 `data/records.js` 派生联系人分组和联系人数量
+- 点击联系人跳到联系人详情页
+
+### `pages/contacts/detail`
+
+联系人详情页。展示联系人汇总、来往条目和删除确认弹窗。
+
+依赖：
+
+- `data/contacts.js`
+- `components/navigation-bar`
+
+注意：
+
+- `editContact()` 跳转到 `pages/contacts/edit/edit`
+- `confirmDelete()` 只是跳回联系人列表页，没有真实删除数据
+- 往来条目跳转到 `pages/records/detail/detail`；详情页会先查 `data/records.js`，找不到时再用 `getContactRecordById()` 从联系人数据中转换记录
+
+### `pages/contacts/edit`
+
+联系人编辑页。当前只支持修改联系人姓名。
+
+依赖：
+
+- `data/contacts.js`
+- `components/navigation-bar`
+
+核心逻辑：
+
+- URL 参数 `id` 查询联系人并填充当前姓名
+- `updateName()` 更新输入框状态
+- `saveContact()` 校验姓名不能为空，调用 `updateContactName(id, name)` 写入内存数据和微信本地缓存
+- 保存后 `wx.navigateBack()` 返回联系人详情页
+- 联系人详情页在 `onShow()` 重新读取联系人，因此返回后姓名会刷新
+
+### `pages/mine`
+
+我的页。展示用户信息卡片、功能入口列表和退出登录入口。
+
+依赖：
+
+- `components/navigation-bar`
+- `components/app-tabbar`
+
+核心逻辑：
+
+- `user` 保存用户名和用户 ID
+- `menuItems` 渲染分享给好友、关于我们、数据管理、意见反馈、系统设置
+- “关于我们”跳转到 `pages/mine/about/about`
+- “数据管理”跳转到 `pages/mine/data/data`
+- “意见反馈”跳转到 `pages/mine/feedback/feedback`
+- “系统设置”跳转到 `pages/mine/settings/settings`
+- 点击顶部个人信息卡片跳转到 `pages/mine/profile/edit/edit`
+- 其他功能入口和退出登录均为 toast 占位，业务逻辑待接入
+
+### `pages/mine/profile/edit`
+
+个人信息编辑页。展示头像占位、昵称输入、手机号和保存修改按钮。
+
+依赖：
+
+- `components/navigation-bar`
+
+核心逻辑：
+
+- `nickname` 保存昵称输入值
+- `phone` 保存手机号展示值
+- 点击头像、解绑手机号、保存修改当前均为 toast 占位，真实账号逻辑待接入
+
+### `pages/mine/about`
+
+关于我们页。展示版本号和使用帮助两个入口。
+
+依赖：
+
+- `components/navigation-bar`
+
+核心逻辑：
+
+- 点击“版本号”跳转到 `pages/mine/about/version/version`
+- 点击“使用帮助”跳转到 `pages/mine/about/help`
+
+### `pages/mine/about/version`
+
+版本号页。展示当前版本号。
+
+依赖：
+
+- `components/navigation-bar`
+
+核心逻辑：
+
+- `version` 保存当前展示版本，当前为 `V.1.1.0`
+
+### `pages/mine/about/help`
+
+使用帮助页。展示使用帮助说明卡片。
+
+依赖：
+
+- `components/navigation-bar`
+
+核心逻辑：
+
+- 页面使用米白色背景和白色卡片承接帮助内容
+- 当前已接入第一张卡片：`一款帮你记录人情来往的小工具`
+- 当前已接入第二张卡片：`基础操作`，包含快速添加记录、查找历史记录、查看记录详情、重新编辑记录、恢复删除记录五个说明小卡片
+- 当前已接入第三张卡片：`常见问题`，包含收费、数据丢失、离线使用、多设备同步、意见反馈五个 QA 小卡片
+
+### `pages/mine/data`
+
+数据管理页。展示导出数据、回收站两个入口。
+
+依赖：
+
+- `components/navigation-bar`
+
+核心逻辑：
+
+- `actions` 渲染导出数据和回收站入口
+- 点击“回收站”跳转到 `pages/mine/data/trash`
+- 导出数据仍是占位逻辑
+
+### `pages/mine/data/trash`
+
+回收站页。展示已删除的记录。
+
+依赖：
+
+- `data/records.js`
+- `components/navigation-bar`
+- `components/record-group-list`
+
+核心逻辑：
+
+- `onShow()` 读取 `getTrashRecords()` 并按日期倒序展示
+- 使用 `getYearGroups()` 按年份和日期分组
+- 点击右上角“管理”进入批量管理模式，支持全选、恢复、删除
+- 非管理模式点击回收站条目当前仍为提示占位
+
+### `pages/mine/feedback`
+
+意见反馈页。展示邮箱、反馈类型、反馈内容和提交按钮。
+
+依赖：
+
+- `components/navigation-bar`
+
+核心逻辑：
+
+- 邮箱为 `2523369515@qq,com`，点击邮箱卡片复制邮箱
+- `feedbackTypes` 渲染四个反馈类型按钮，点击后按钮变绿，再次点击取消
+- 反馈类型必填，未选择时提交会显示居中弹窗占位
+- 反馈内容必填，且限制 500 字以内，超过时 toast 提示“请将内容控制在500字以内哦~”
+- 居中弹窗目前为临时样式，等待正式弹窗设计替换
+
+### `pages/mine/settings`
+
+系统设置页。按缓存管理、法律条款、账号管理分组展示设置入口。
+
+依赖：
+
+- `components/navigation-bar`
+
+核心逻辑：
+
+- `sections` 渲染清除缓存、用户协议、隐私政策、注销账号
+- 点击“用户协议”跳转到 `pages/mine/settings/agreement/agreement`
+- 点击“隐私政策”跳转到 `pages/mine/settings/privacy/privacy`
+- 点击入口显示待接入 toast，真实设置逻辑待接入
+
+### `pages/mine/settings/agreement`
+
+用户协议页。展示用户协议正文。
+
+依赖：
+
+- `components/navigation-bar`
+
+核心逻辑：
+
+- 页面使用米白色背景和白色卡片承接协议内容
+- 当前协议更新日期为 `2026年6月18日`
+
+### `pages/mine/settings/privacy`
+
+隐私政策页。展示隐私政策正文。
+
+依赖：
+
+- `components/navigation-bar`
+
+核心逻辑：
+
+- 页面使用米白色背景和白色卡片承接隐私政策内容
+- 当前隐私政策更新日期为 `2026年6月18日`
+
+## 组件职责
+
+### `components/navigation-bar`
+
+自定义顶部导航栏。
+
+特性：
+
+- 支持标题、背景色、文字色、返回按钮、homeButton、loading、显示隐藏动画等属性
+- 在 `attached` 生命周期中读取胶囊按钮和窗口信息，适配安全区和右侧胶囊区域
+- `back()` 默认调用 `wx.navigateBack`
+
+### `components/app-tabbar`
+
+自定义底部导航栏。
+
+Tab：
+
+- 首页：`index`
+- 统计：`stats`
+- 新建：`create`
+- 联系人：`contacts`
+- 我的：`mine`
+
+切换方式：`wx.redirectTo({ url: /pages/${page}/${page} })`
+
+注意：
+
+- 这些页面没有使用微信原生 `tabBar` 配置，而是自定义组件模拟底部导航。
+- 首页、统计、联系人、我的等底部图标使用 `assets/icons/` 下的 SVG 资源；未选中态为灰色 SVG，选中态切换为黑色 SVG，并通过组件内叠加新建按钮主色色块实现局部填充。
+- 新建记录编辑页的日期图标使用 `assets/icons/create-date.svg`；日历弹窗年月选择下拉按钮使用 `assets/icons/calendar-dropdown.svg`；日历弹窗上/下月按钮使用 `assets/icons/calendar-prev.svg` 和 `assets/icons/calendar-next.svg`。
+- 联系人页搜索框左侧放大镜图标使用 `assets/icons/contacts-search.svg`。
+- 全部记录页顶部类型筛选图标使用 `assets/icons/filter-all-types.svg`，由 `components/record-type-filter` 引用。
+- 意见反馈页邮箱卡片图标使用 `assets/icons/mine-feedback-email.svg`。
+- 个人信息编辑页保存修改按钮图标使用 `assets/icons/profile-save.svg`。
+- 使用帮助页第一张卡片图标使用 `assets/icons/help-wallet.svg`。
+
+### `components/record-type-filter`
+
+全部记录页顶部筛选组件。
+
+输入属性：
+
+- `options`
+- `selectedType`
+- `selectedLabel`
+- `open`
+- `sortOptions`
+- `selectedSort`
+- `sortOpen`
+- `sortLabel`
+
+输出事件：
+
+- `toggle`
+- `select`
+- `sorttoggle`
+- `sortselect`
+
+### `components/record-group-list`
+
+统一的记录列表组件。首页“最近记录”和统计/全部记录的分组条目都使用它，保证类型、姓名、时间、事由、金额/礼物内容/请客内容、箭头等条目结构和样式一致。
+
+输入属性：
+
+- `yearGroups`
+- `records`
+- `plain`：普通列表模式，不显示年份/日期分组标题
+- `embedded`：嵌入卡片模式，不额外添加组件外层内边距
+- `hideYear`：隐藏年份标题，回收站页使用
+- `selectable`：选择模式，条目左侧显示选择圆点，回收站管理模式使用
+
+输出事件：
+
+- `recordtap`，携带 `{ id }`
+- `selectrecord`，选择模式下点击条目触发，携带 `{ id }`
+
+## 当前完成度
+
+已经完成：
+
+- 小程序页面和组件基本结构
+- 首页、统计、全部记录、详情、联系人、新建等核心界面
+- 本地 JS 数据模型和微信本地缓存写入
+- 新建记录保存后同步首页、统计页、联系人页
+- 记录筛选和统计计算
+- 自定义导航栏和自定义底部 TabBar
+
+尚未完成或仍是原型：
+
+- 编辑记录真实保存
+- 删除联系人
+- 云端数据持久化
+- 后端/云开发/API 接入
+- 表单校验和错误提示
+
+## 重要注意事项
+
+- 项目文件是 UTF-8 编码。PowerShell 默认 `Get-Content` 可能显示中文乱码，读取时建议使用 `Get-Content -Encoding UTF8`。
+- 当前目录不是 Git 仓库，无法通过 `git status` 或提交历史判断变更来源。
+- 代码里没有 npm 依赖和构建脚本，主要应通过微信开发者工具打开项目。
+- 如果要做数据写入功能，优先先决定数据源方案：本地缓存、云开发数据库、还是自建接口。
+- 联系人数据由记录动态派生；如果后续接入云端联系人表，需要重新确认联系人 ID 与记录中姓名字段的关系。
+
+## 接手建议
+
+做功能前建议按这个顺序看：
+
+1. `app.json`：确认页面、组件和渲染配置
+2. `data/records.js`、`data/contacts.js`：确认数据模型
+3. 目标页面的 `.js`：理解状态和事件
+4. 目标页面的 `.wxml`：理解展示结构
+5. 目标页面的 `.wxss`：理解布局和视觉约束
+6. 相关组件目录：确认事件和属性边界
+
+如果任务涉及业务闭环，优先检查该功能是否只是 UI 原型。例如新建记录已接入本地缓存，但编辑记录、删除联系人等仍没有完整数据层实现。

@@ -1,0 +1,247 @@
+:host {
+  display: block;
+}
+
+.record-list-module {
+  padding: 22rpx 34rpx var(--record-list-padding-bottom, 72rpx);
+  box-sizing: border-box;
+}
+
+.record-list-module.embedded {
+  padding: 0;
+}
+
+.year-title {
+  margin: 4rpx 0 18rpx 6rpx;
+  color: #5b351a;
+  font-size: 36rpx;
+  line-height: 48rpx;
+}
+
+.day-title {
+  margin: 0 0 10rpx 16rpx;
+  color: #756f68;
+  font-size: 26rpx;
+  line-height: 38rpx;
+}
+
+.day-card {
+  margin-bottom: 18rpx;
+  overflow: hidden;
+  border: 1rpx solid #eadfce;
+  border-radius: 18rpx;
+  background: rgba(255, 255, 255, 0.9);
+  box-sizing: border-box;
+}
+
+.embedded .day-card {
+  margin-bottom: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.record-row {
+  min-height: 96rpx;
+  display: flex;
+  align-items: center;
+  margin: 0 16rpx;
+  border-bottom: 1rpx solid #eadfce;
+  box-sizing: border-box;
+}
+
+.embedded .record-row {
+  min-height: 116rpx;
+  margin: 0;
+  border-bottom-color: #e7dccc;
+}
+
+.record-row:last-child {
+  border-bottom: 0;
+}
+
+.record-check {
+  width: 34rpx;
+  height: 34rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  margin-right: 18rpx;
+  border: 2rpx solid #c9bbaa;
+  border-radius: 50%;
+  background: #fffdf9;
+  box-sizing: border-box;
+}
+
+.record-check view {
+  width: 18rpx;
+  height: 18rpx;
+  display: none;
+  border-radius: 50%;
+  background: #c79b65;
+}
+
+.record-check.checked {
+  border-color: #c79b65;
+}
+
+.record-check.checked view {
+  display: block;
+}
+
+.record-tag {
+  width: 60rpx;
+  height: 34rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  border-radius: 6rpx;
+  font-size: 21rpx;
+  font-weight: 600;
+  box-sizing: border-box;
+}
+
+.embedded .record-tag {
+  width: 80rpx;
+  height: 46rpx;
+  border-radius: 7rpx;
+  font-size: 23rpx;
+  font-weight: 500;
+}
+
+.tag-cash {
+  color: #c7191e;
+  background: #f8e8e6;
+}
+
+.tag-gift {
+  color: #7d684d;
+  background: #f1eee8;
+}
+
+.tag-meal {
+  color: #286c3b;
+  background: #e7eee4;
+}
+
+.record-main {
+  flex: 1;
+  min-width: 0;
+  padding-left: 34rpx;
+}
+
+.embedded .record-main {
+  padding-left: 26rpx;
+}
+
+.record-name {
+  color: #111111;
+  font-size: 29rpx;
+  font-weight: 400;
+  line-height: 40rpx;
+}
+
+.embedded .record-name {
+  color: #1f1b18;
+  font-size: 28rpx;
+  font-weight: 500;
+}
+
+.record-meta {
+  margin-top: 4rpx;
+  display: flex;
+  align-items: center;
+  color: #79746f;
+  font-size: 23rpx;
+  line-height: 32rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.record-date {
+  width: 66rpx;
+  flex: none;
+}
+
+.record-scene {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.record-value {
+  max-width: 270rpx;
+  padding-left: 18rpx;
+  font-size: 29rpx;
+  line-height: 40rpx;
+  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.embedded .record-value {
+  max-width: 250rpx;
+  padding-left: 16rpx;
+  font-size: 27rpx;
+}
+
+.embedded .record-meta {
+  margin-top: 6rpx;
+  color: #756f68;
+}
+
+.income {
+  color: #247540;
+}
+
+.expense {
+  color: #d21b1b;
+}
+
+.record-arrow {
+  width: 32rpx;
+  height: 40rpx;
+  flex: none;
+  padding-left: 14rpx;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.record-arrow::before {
+  content: "";
+  position: absolute;
+  right: 3rpx;
+  top: 9rpx;
+  width: 17rpx;
+  height: 17rpx;
+  border-right: 4rpx solid #96918b;
+  border-top: 4rpx solid #96918b;
+  transform: rotate(45deg);
+  box-sizing: border-box;
+}
+
+.embedded .record-arrow {
+  width: 34rpx;
+  padding-left: 10rpx;
+}
+
+.tap-active {
+  opacity: 0.68;
+}
+
+.empty-state {
+  margin-top: 180rpx;
+  color: #9a948d;
+  font-size: 28rpx;
+  text-align: center;
+}
+
+.empty-state.center-empty {
+  margin-top: 0;
+}

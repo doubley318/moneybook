@@ -1,0 +1,70 @@
+﻿<navigation-bar title="隐私政策" color="#111111" background="transparent"></navigation-bar>
+
+<view class="privacy-page">
+  <scroll-view class="privacy-scroll" scroll-y enhanced show-scrollbar="{{false}}">
+    <view class="privacy-card">
+      <view class="privacy-title">隐私政策</view>
+      <view class="privacy-date">更新日期：2026年6月18日</view>
+
+      <view class="intro">
+        礼金记录本（以下简称“我们”）重视您的隐私，并承诺以业界安全标准保护您的个人信息。您的数据仅您可见，我们不会收集、存储或转卖任何个人信息。
+      </view>
+
+      <view class="section">
+        <view class="section-title">一、我们收集的信息</view>
+        <view class="paragraph">1.1账号信息：</view>
+        <view class="paragraph">昵称、头像、OpenID用于创建您用户账号和用户名，通过微信授权自动获取。</view>
+        <view class="paragraph">1.2记录数据：</view>
+        <view class="paragraph">用户主动输入的礼金金额、事件类型、对象姓名、备注内容等数据，数据与用户的账号绑定，仅用户本人可见。</view>
+        <view class="paragraph">1.3设备信息：</view>
+        <view class="paragraph">用户的设备机型、操作系统版本、微信版本等，用于识别账号异常状态、了解产品适配性，优化服务体验。</view>
+      </view>
+
+      <view class="section">
+        <view class="section-title">二、设备权限调用</view>
+        <view class="paragraph">2.1本小程序仅申请相册权限，用于上传记录照片。我们仅读取您主动选择的图片，不会扫描或读取您的整个相册，也不会上传或保存您未选择的任何图片。</view>
+        <view class="paragraph">2.2本小程序不申请位置、通讯录等其他权限。所有权限仅在您主动操作时调用，您可随时在手机系统设置中关闭。</view>
+      </view>
+
+      <view class="section">
+        <view class="section-title">三、信息储存和保护</view>
+        <view class="paragraph">3.1储存位置：您的个人信息和数据存储在微信云开发平台上，位于中华人民共和国境内。</view>
+        <view class="paragraph">3.2储存期限：数据会持续储存直到注销账号；注销账号后所有数据会被永久删除。</view>
+        <view class="paragraph">3.3数据访问：严格控制内部数据访问权限，仅授权人员可访问。</view>
+        <view class="paragraph">3.4数据修改：我们不会主动查看、修改或删除您的个人记录，除非您本人提出请求或法律法规要求。</view>
+      </view>
+
+      <view class="section">
+        <view class="section-title">四、您的权利</view>
+        <view class="paragraph">您对您的个人信息享有以下权利：</view>
+        <view class="paragraph">4.1查阅和更正</view>
+        <view class="paragraph">您可在【记录列表】中随时查看、修改或删除您录入的每一条记录。</view>
+        <view class="paragraph">4.2数据导出</view>
+        <view class="paragraph">您可在【我的】-【导出数据】中将您的所有记录导出为通用格式文件。</view>
+        <view class="paragraph">4.3注销账号</view>
+        <view class="paragraph">您可在【我的】-【账号设置】中申请注销账号。注销后，您的所有数据将被永久删除。</view>
+        <view class="paragraph">4.4撤销同意</view>
+        <view class="paragraph">您随时可以停止使用本小程序，即视为撤回对我们处理您个人信息的同意。撤回同意不影响撤回前基于同意的处理。</view>
+      </view>
+
+      <view class="section">
+        <view class="section-title">五、第三方服务</view>
+        <view class="paragraph">5.1本小程序当前未接入任何第三方SDK（如数据统计、广告、支付等），您的数据不会与任何第三方共享。</view>
+        <view class="paragraph">5.2如未来接入第三方服务，我们将在此章节明确披露：第三方服务名称及提供方；该服务收集的数据类型及用途；该服务的隐私政策链接。</view>
+      </view>
+
+      <view class="section">
+        <view class="section-title">六、政策更新</view>
+        <view class="paragraph">6.1根据法律法规或服务需要更新本隐私政策。</view>
+        <view class="paragraph">6.2更新后会在本页面发布，并通过小程序启动弹窗提醒用户查看。</view>
+        <view class="paragraph">6.3重大变更将提前通过小程序公告通知用户。</view>
+      </view>
+
+      <view class="section">
+        <view class="section-title">七、联系我们</view>
+        <view class="paragraph">如用户对本协议有任何疑问、意见或投诉，请通过小程序内的意见反馈功能联系我们。</view>
+      </view>
+    </view>
+    <view class="privacy-bottom-space"></view>
+  </scroll-view>
+</view>

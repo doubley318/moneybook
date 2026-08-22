@@ -1,0 +1,23 @@
+page {
+  height: 100vh;
+  overflow: hidden;
+  color: #1f1b18;
+  background:
+    radial-gradient(circle at 16% 2%, rgba(221, 198, 161, 0.2), transparent 32%),
+    linear-gradient(180deg, #fbf5ec 0%, #f8f0e6 100%);
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+}
+
+.stats-records-page {
+  height: calc(100vh - 94px);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.records-scroll {
+  flex: 1;
+  height: 0;
+  min-height: 0;
+}

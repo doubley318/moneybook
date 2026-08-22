@@ -1,0 +1,45 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/stats/stats",
+    "pages/create/create",
+    "pages/create/edit/edit",
+    "pages/contacts/contacts",
+    "pages/contacts/detail/detail",
+    "pages/contacts/edit/edit",
+    "pages/mine/mine",
+    "pages/records/records",
+    "pages/records/detail/detail",
+    "pages/records/edit/edit",
+    "pages/stats/records/records",
+    "pages/mine/about/about",
+    "pages/mine/about/version/version",
+    "pages/mine/about/help",
+    "pages/mine/data/data",
+    "pages/mine/data/trash",
+    "pages/mine/feedback/feedback",
+    "pages/mine/profile/edit/edit",
+    "pages/mine/settings/settings",
+    "pages/mine/settings/agreement/agreement",
+    "pages/mine/settings/privacy/privacy"
+  ],
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationStyle": "custom"
+  },
+  "style": "v2",
+  "renderer": "skyline",
+  "rendererOptions": {
+    "skyline": {
+      "defaultDisplayBlock": true,
+      "defaultContentBox": true,
+      "tagNameStyleIsolation": "legacy",
+      "disableABTest": true,
+      "sdkVersionBegin": "3.0.0",
+      "sdkVersionEnd": "15.255.255"
+    }
+  },
+  "componentFramework": "glass-easel",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

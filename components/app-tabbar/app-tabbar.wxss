@@ -1,0 +1,148 @@
+.app-tabbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 94px;
+  display: flex;
+  align-items: start;
+  padding: 9px 18rpx 44px;
+  border-top: 1rpx solid rgba(221, 205, 181, 0.86);
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 -8rpx 24rpx rgba(122, 88, 44, 0.08);
+  box-sizing: border-box;
+  z-index: 50;
+}
+
+.tab-item {
+  flex: 1;
+  min-width: 0;
+  height: 44px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  color: #868078;
+  font-size: 20rpx;
+  line-height: 1;
+  position: relative;
+}
+
+.tab-item text {
+  margin-top: 10rpx;
+  text-align: center;
+}
+
+.tab-item.active {
+  color: #111111;
+  font-weight: 500;
+}
+
+.tab-icon {
+  width: 24px;
+  height: 24px;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.tab-svg-icon {
+  width: 100%;
+  height: 100%;
+  display: block;
+  position: relative;
+  z-index: 2;
+}
+
+.home-door-fill {
+  position: absolute;
+  left: 10px;
+  bottom: 2px;
+  width: 4px;
+  height: 6px;
+  display: none;
+  border-radius: 2rpx 2rpx 0 0;
+  background: #c79b65;
+  z-index: 1;
+}
+
+.tab-item.active .home-door-fill {
+  display: block;
+}
+
+.stat-pie-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 24px;
+  height: 24px;
+  display: none;
+  z-index: 1;
+}
+
+.tab-item.active .stat-pie-fill {
+  display: block;
+}
+
+.create {
+  transform: translateY(-7rpx);
+}
+
+.create-button {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #d9b17e 0%, #c79b65 100%);
+  box-shadow: 0 6rpx 12rpx rgba(159, 104, 48, 0.16);
+  position: relative;
+}
+
+.create-button view {
+  position: absolute;
+  width: 17px;
+  height: 3px;
+  background: #ffffff;
+  border-radius: 3px;
+}
+
+.create-button view:nth-child(2) {
+  transform: rotate(90deg);
+}
+
+.contact-head-fill {
+  position: absolute;
+  left: 8px;
+  top: 3px;
+  width: 8px;
+  height: 8px;
+  display: none;
+  background: #c79b65;
+  border-radius: 50%;
+  z-index: 1;
+}
+
+.tab-item.active .contact-head-fill {
+  display: block;
+}
+
+.mine-head-fill {
+  position: absolute;
+  left: 7px;
+  top: 3px;
+  width: 10px;
+  height: 10px;
+  display: none;
+  background: #c79b65;
+  border-radius: 50%;
+  z-index: 1;
+}
+
+.tab-item.active .mine-head-fill {
+  display: block;
+}
+
+.tap-active {
+  opacity: 0.68;
+}

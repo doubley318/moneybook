@@ -1,0 +1,159 @@
+<navigation-bar title="记录详情" color="#111111" background="#fbf5ec"></navigation-bar>
+
+<view class="detail-page" wx:if="{{record}}">
+  <view class="info-card">
+    <block wx:if="{{record.typeKey == 'cash'}}">
+      <view class="info-row">
+        <text class="info-label">姓名</text>
+        <text class="info-value">{{record.name}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">类型</text>
+        <view class="type-tag tag-{{record.typeKey}}">{{record.type}}</view>
+      </view>
+      <view class="info-row">
+        <text class="info-label">日期</text>
+        <text class="info-value">{{record.fullDateText}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">金额</text>
+        <text class="info-value amount {{record.valueClass}}">{{record.value}}</text>
+      </view>
+      <view class="info-row wrap-row">
+        <text class="info-label">事由</text>
+        <view class="wrap-value {{record.sceneClass}}">
+          <text>{{record.scene}}</text>
+        </view>
+      </view>
+      <view class="info-row wrap-row" wx:if="{{record.hasRemark}}">
+        <text class="info-label">备注</text>
+        <view class="wrap-value {{record.remarkClass}}">
+          <text>{{record.remark}}</text>
+        </view>
+      </view>
+    </block>
+
+    <block wx:elif="{{record.typeKey == 'gift'}}">
+      <view class="info-row">
+        <text class="info-label">姓名</text>
+        <text class="info-value">{{record.name}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">类型</text>
+        <view class="type-tag tag-{{record.typeKey}}">{{record.type}}</view>
+      </view>
+      <view class="info-row">
+        <text class="info-label">日期</text>
+        <text class="info-value">{{record.fullDateText}}</text>
+      </view>
+      <view class="info-row wrap-row">
+        <text class="info-label">礼物</text>
+        <view class="wrap-value {{record.valueWrapClass}} {{record.valueClass}}">
+          <text>{{record.value}}</text>
+        </view>
+      </view>
+      <view class="info-row wrap-row">
+        <text class="info-label">事由</text>
+        <view class="wrap-value {{record.sceneClass}}">
+          <text>{{record.scene}}</text>
+        </view>
+      </view>
+      <view class="info-row" wx:if="{{record.hasEstimatedValue}}">
+        <text class="info-label">预估值</text>
+        <text class="info-value">{{record.estimatedValue}}</text>
+      </view>
+      <view class="info-row wrap-row" wx:if="{{record.hasRemark}}">
+        <text class="info-label">备注</text>
+        <view class="wrap-value {{record.remarkClass}}">
+          <text>{{record.remark}}</text>
+        </view>
+      </view>
+    </block>
+
+    <block wx:else>
+      <view class="info-row">
+        <text class="info-label">姓名</text>
+        <text class="info-value">{{record.name}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">类型</text>
+        <view class="type-tag tag-{{record.typeKey}}">{{record.type}}</view>
+      </view>
+      <view class="info-row">
+        <text class="info-label">日期</text>
+        <text class="info-value">{{record.fullDateText}}</text>
+      </view>
+      <view class="info-row wrap-row">
+        <text class="info-label">请客</text>
+        <view class="wrap-value {{record.valueWrapClass}} {{record.valueClass}}">
+          <text>{{record.value}}</text>
+        </view>
+      </view>
+      <view class="info-row wrap-row">
+        <text class="info-label">事由</text>
+        <view class="wrap-value {{record.sceneClass}}">
+          <text>{{record.scene}}</text>
+        </view>
+      </view>
+      <view class="info-row" wx:if="{{record.hasCost}}">
+        <text class="info-label">消费金额</text>
+        <text class="info-value">{{record.cost}}</text>
+      </view>
+      <view class="info-row wrap-row" wx:if="{{record.hasRemark}}">
+        <text class="info-label">备注</text>
+        <view class="wrap-value {{record.remarkClass}}">
+          <text>{{record.remark}}</text>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <view class="photo-card" wx:if="{{record.hasImages}}">
+    <view class="photo-title">图片</view>
+    <view class="photo-list">
+      <image
+        class="photo-thumb uploaded-photo"
+        wx:for="{{record.images}}"
+        wx:key="*this"
+        src="{{item}}"
+        mode="aspectFill"
+        data-src="{{item}}"
+        bindtap="openImagePreview"
+      ></image>
+    </view>
+  </view>
+
+  <view class="detail-actions">
+    <view class="edit-button" bindtap="editRecord" hover-class="tap-active" hover-stay-time="80">编辑记录</view>
+    <view class="delete-button" bindtap="openDeleteDialog" hover-class="tap-active" hover-stay-time="80">删除记录</view>
+  </view>
+
+  <view class="dialog-mask" wx:if="{{showDeleteDialog}}">
+    <view class="delete-dialog">
+      <view class="dialog-title">删除记录</view>
+      <view class="dialog-text">删除记录后，该条记录将移入回收站</view>
+      <view class="dialog-actions">
+        <view class="dialog-button cancel" bindtap="closeDeleteDialog">取消</view>
+        <view class="dialog-button confirm" bindtap="confirmDelete">确定</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="image-preview-mask" wx:if="{{previewVisible}}" bindtap="closeImagePreview">
+    <image
+      class="preview-image"
+      src="{{previewImage}}"
+      mode="aspectFit"
+      catchlongpress="openSaveImageSheet"
+    ></image>
+
+    <view class="save-sheet-mask" wx:if="{{showSaveSheet}}" catchtap="closeSaveImageSheet">
+      <view class="save-sheet" catchtap="noop">
+        <view class="save-sheet-action {{savingImage ? 'disabled' : ''}}" bindtap="savePreviewImage">
+          保存图片
+        </view>
+        <view class="save-sheet-cancel" bindtap="closeSaveImageSheet">取消</view>
+      </view>
+    </view>
+  </view>
+</view>

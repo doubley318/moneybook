@@ -1,0 +1,44 @@
+<navigation-bar title="新建记录" back="{{false}}" color="#111111" background="transparent"></navigation-bar>
+
+<view class="create-entry-page">
+  <view class="entry-content">
+    <view class="entry-title">选择一种往来类型</view>
+
+    <view class="type-grid">
+      <view
+        class="type-item"
+        data-type="cash"
+        bindtap="goCreateEdit"
+        hover-class="tap-active"
+        hover-stay-time="80"
+      >
+        <image class="type-visual type-icon" src="/assets/icons/home-red-packet.svg" mode="aspectFit"></image>
+        <view class="type-name">礼金</view>
+      </view>
+
+      <view
+        class="type-item"
+        data-type="gift"
+        bindtap="goCreateEdit"
+        hover-class="tap-active"
+        hover-stay-time="80"
+      >
+        <image class="type-visual type-icon gift-icon" src="/assets/icons/home-gift-box.svg" mode="aspectFit"></image>
+        <view class="type-name">礼物</view>
+      </view>
+
+      <view
+        class="type-item"
+        data-type="meal"
+        bindtap="goCreateEdit"
+        hover-class="tap-active"
+        hover-stay-time="80"
+      >
+        <image class="type-visual type-icon" src="/assets/icons/home-meal.svg" mode="aspectFit"></image>
+        <view class="type-name">请客</view>
+      </view>
+    </view>
+  </view>
+
+  <app-tabbar active="create"></app-tabbar>
+</view>

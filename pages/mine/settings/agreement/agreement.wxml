@@ -1,0 +1,49 @@
+﻿<navigation-bar title="用户协议" color="#111111" background="transparent"></navigation-bar>
+
+<view class="agreement-page">
+  <scroll-view class="agreement-scroll" scroll-y enhanced show-scrollbar="{{false}}">
+    <view class="agreement-card">
+      <view class="agreement-title">用户协议</view>
+      <view class="agreement-date">更新日期：2026年6月18日</view>
+
+      <view class="section">
+        <view class="section-title">一、协议接受与变更</view>
+        <view class="paragraph">1.1感谢您使用本小程序！使用前请花几分钟阅读本协议。当您点击“同意”并开始使用，即表示您认可并接受本协议的所有条款。</view>
+        <view class="paragraph">1.2我们可能会根据法律法规或服务需要更新本协议。更新后会在本页面发布，并通过小程序启动弹窗提醒你查看。</view>
+      </view>
+
+      <view class="section">
+        <view class="section-title">二、服务内容</view>
+        <view class="paragraph">2.1本小程序是一款记录人情来往的工具，所有功能免费使用，未来如有收费功能将提前公示并征得用户同意。</view>
+        <view class="paragraph">2.2本小程序需要联网使用，数据实时保存至云端。</view>
+      </view>
+
+      <view class="section">
+        <view class="section-title">三、账号管理</view>
+        <view class="paragraph">3.1本小程序通过用户的微信账号授权登录，用户的昵称、头像由微信提供。</view>
+        <view class="paragraph">3.2用户可以随时在【我的】-【系统设置】中申请注销账号。注销后，用户所有数据将永久删除。</view>
+        <view class="paragraph">3.3用户对自己录入的所有数据内容负全部责任，请确保所记录信息真实、合法。</view>
+      </view>
+
+      <view class="section">
+        <view class="section-title">四、数据保护</view>
+        <view class="paragraph">4.1用户的数据独立储存，仅用户本人可见。</view>
+        <view class="paragraph">4.2我们不会收集、存储或转卖用户的个人信息用于任何商业目的。</view>
+        <view class="paragraph">4.3用户数据存储于微信云开发平台，享受微信提供的安全保障。</view>
+      </view>
+
+      <view class="section">
+        <view class="section-title">五、免责声明</view>
+        <view class="paragraph">5.1本小程序按“现状”提供服务，不提供任何准确性、可靠性的保证。</view>
+        <view class="paragraph">5.2因不可抗力导致服务中断或数据丢失，我们不承担责任。</view>
+        <view class="paragraph">5.3本小程序仅作为记录工具，用户根据记录做出的任何实际决策，由用户自行承担后果。</view>
+      </view>
+
+      <view class="section">
+        <view class="section-title">六、联系我们</view>
+        <view class="paragraph">如用户对本协议有任何疑问、意见或投诉，请通过小程序内的意见反馈功能联系我们。</view>
+      </view>
+    </view>
+    <view class="agreement-bottom-space"></view>
+  </scroll-view>
+</view>

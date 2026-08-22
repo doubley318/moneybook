@@ -1,0 +1,45 @@
+<navigation-bar title="系统设置" color="#111111" background="transparent"></navigation-bar>
+
+<view class="settings-page">
+  <view class="setting-section" wx:for="{{sections}}" wx:key="title" wx:for-item="section">
+    <view class="section-title">{{section.title}}</view>
+    <view class="setting-card">
+      <view
+        class="setting-row"
+        wx:for="{{section.items}}"
+        wx:key="key"
+        wx:for-item="item"
+        data-key="{{item.key}}"
+        data-label="{{item.label}}"
+        bindtap="handleSettingTap"
+        hover-class="tap-active"
+        hover-stay-time="80"
+      >
+        <text>{{item.label}}</text>
+        <view class="row-arrow"></view>
+      </view>
+    </view>
+  </view>
+
+  <view class="dialog-mask" wx:if="{{showCancelAccountDialog}}">
+    <view class="clear-dialog">
+      <view class="dialog-title">注销账号</view>
+      <view class="dialog-text">注销后所有数据将被永久删除<br />确定要继续吗?</view>
+      <view class="dialog-actions">
+        <view class="dialog-button cancel" bindtap="closeCancelAccountDialog">取消</view>
+        <view class="dialog-button confirm" bindtap="confirmCancelAccount">确定</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="dialog-mask" wx:if="{{showClearCacheDialog}}">
+    <view class="clear-dialog">
+      <view class="dialog-title">清除缓存</view>
+      <view class="dialog-text">确定清除缓存数据吗</view>
+      <view class="dialog-actions">
+        <view class="dialog-button cancel" bindtap="closeClearCacheDialog">取消</view>
+        <view class="dialog-button confirm" bindtap="confirmClearCache">确定</view>
+      </view>
+    </view>
+  </view>
+</view>

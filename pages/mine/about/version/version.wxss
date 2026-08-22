@@ -1,0 +1,43 @@
+page {
+  min-height: 100vh;
+  color: #111111;
+  background:
+    radial-gradient(circle at 14% 0%, rgba(221, 198, 161, 0.18), transparent 34%),
+    linear-gradient(180deg, #fbf5ec 0%, #f8f0e6 100%);
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+}
+
+.version-page {
+  min-height: 100vh;
+  padding: 102rpx 30rpx 80rpx;
+  box-sizing: border-box;
+}
+
+.version-card {
+  min-height: 86rpx;
+  display: flex;
+  align-items: center;
+  padding: 0 44rpx;
+  border: 2rpx solid #d4c8b8;
+  border-radius: 28rpx;
+  background: rgba(255, 255, 255, 0.72);
+  box-sizing: border-box;
+}
+
+.version-label,
+.version-value {
+  color: #1f1b18;
+  font-size: 28rpx;
+  font-weight: 500;
+  line-height: 40rpx;
+}
+
+.version-label {
+  flex: none;
+  margin-right: 112rpx;
+}
+
+.version-value {
+  flex: 1;
+  min-width: 0;
+}

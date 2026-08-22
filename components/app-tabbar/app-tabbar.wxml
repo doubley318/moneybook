@@ -1,0 +1,31 @@
+<view class="app-tabbar">
+  <view
+    class="tab-item {{active == item.key ? 'active' : ''}} {{item.icon == 'create' ? 'create' : ''}}"
+    wx:for="{{tabs}}"
+    wx:key="key"
+    data-key="{{item.key}}"
+    data-page="{{item.page}}"
+    bindtap="switchTab"
+    hover-class="tap-active"
+    hover-stay-time="80"
+  >
+    <view wx:if="{{item.icon == 'home'}}" class="tab-icon home-icon">
+      <view class="home-door-fill"></view>
+      <image class="tab-svg-icon" src="{{active == item.key ? '/assets/icons/tab-home-active.svg' : '/assets/icons/tab-home.svg'}}" mode="aspectFit"></image>
+    </view>
+    <view wx:if="{{item.icon == 'stat'}}" class="tab-icon stat-icon">
+      <image class="stat-pie-fill" src="/assets/icons/tab-stats-fill.svg" mode="aspectFit"></image>
+      <image class="tab-svg-icon" src="{{active == item.key ? '/assets/icons/tab-stats-active.svg' : '/assets/icons/tab-stats.svg'}}" mode="aspectFit"></image>
+    </view>
+    <view wx:if="{{item.icon == 'create'}}" class="create-button"><view></view><view></view></view>
+    <view wx:if="{{item.icon == 'contact'}}" class="tab-icon contact-icon">
+      <view class="contact-head-fill"></view>
+      <image class="tab-svg-icon" src="{{active == item.key ? '/assets/icons/tab-contact-active.svg' : '/assets/icons/tab-contact.svg'}}" mode="aspectFit"></image>
+    </view>
+    <view wx:if="{{item.icon == 'mine'}}" class="tab-icon mine-icon">
+      <view class="mine-head-fill"></view>
+      <image class="tab-svg-icon" src="{{active == item.key ? '/assets/icons/tab-mine-active.svg' : '/assets/icons/tab-mine.svg'}}" mode="aspectFit"></image>
+    </view>
+    <text>{{item.label}}</text>
+  </view>
+</view>

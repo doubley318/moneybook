@@ -1,0 +1,174 @@
+<navigation-bar title="统计" back="{{false}}" color="#111111" background="transparent"></navigation-bar>
+
+<view class="stats-page" bindtap="closeChartFilter">
+  <view class="category-tabs">
+    <view
+      class="category-tab {{activeCategory == item.key ? 'active' : ''}}"
+      wx:for="{{categories}}"
+      wx:key="key"
+      data-key="{{item.key}}"
+      bindtap="switchCategory"
+      hover-class="tap-active"
+      hover-stay-time="80"
+    >
+      {{item.name}}
+    </view>
+  </view>
+
+  <scroll-view class="stats-scroll" scroll-y enhanced show-scrollbar="{{false}}">
+    <view class="stats-content">
+      <view class="section-title">
+        <image class="title-icon title-svg-icon" src="/assets/icons/stats-total-records.svg" mode="aspectFit"></image>
+        <text>来往总记录</text>
+      </view>
+
+      <view class="summary-grid">
+        <view class="summary-card wide">
+          <view class="summary-head">
+            <image class="summary-icon summary-svg-icon" src="/assets/icons/stats-summary-receive.svg" mode="aspectFit"></image>
+            <text>{{stats.category.receiveLabel}}</text>
+          </view>
+          <view class="summary-number green">{{stats.summary.receiveText}}</view>
+        </view>
+        <view class="summary-card wide">
+          <view class="summary-head">
+            <image class="summary-icon summary-svg-icon" src="/assets/icons/stats-summary-send.svg" mode="aspectFit"></image>
+            <text>{{stats.category.sendLabel}}</text>
+          </view>
+          <view class="summary-number red">{{stats.summary.sendText}}</view>
+        </view>
+        <view class="summary-card small">
+          <view class="summary-head">
+            <image class="summary-icon summary-svg-icon" src="/assets/icons/stats-summary-balance.svg" mode="aspectFit"></image>
+            <text>{{stats.category.balanceLabel}}</text>
+          </view>
+          <view class="summary-number black">{{stats.summary.balanceText}}</view>
+        </view>
+        <view class="summary-card small">
+          <view class="summary-head center">
+            <image class="summary-icon summary-svg-icon" src="/assets/icons/stats-summary-count.svg" mode="aspectFit"></image>
+            <text>来往次数</text>
+          </view>
+          <view class="plain-number">{{stats.summary.countText}}</view>
+        </view>
+        <view class="summary-card small">
+          <view class="summary-head center">
+            <image class="summary-icon summary-svg-icon" src="/assets/icons/stats-summary-people.svg" mode="aspectFit"></image>
+            <text>来往人数</text>
+          </view>
+          <view class="plain-number">{{stats.summary.peopleText}}</view>
+        </view>
+      </view>
+
+      <view class="section-row">
+        <view class="section-title">
+          <image class="title-icon title-svg-icon chart-title-icon" src="/assets/icons/stats-chart.svg" mode="aspectFit"></image>
+          <text>统计图</text>
+        </view>
+        <view class="filter-button" catchtap="toggleChartFilter" hover-class="tap-active" hover-stay-time="80">
+          <image class="filter-icon" src="/assets/icons/stats-filter.svg" mode="aspectFit"></image>
+          <text>筛选</text>
+        </view>
+        <view wx:if="{{chartFilterOpen}}" class="chart-filter-dropdown">
+          <view
+            class="chart-filter-option {{selectedYear == item.value ? 'active' : ''}}"
+            wx:for="{{stats.chartFilterOptions}}"
+            wx:key="value"
+            data-value="{{item.value}}"
+            catchtap="selectChartFilter"
+          >
+            <text>{{item.label}}</text>
+            <view wx:if="{{selectedYear == item.value}}" class="check-icon"></view>
+          </view>
+        </view>
+      </view>
+
+      <view class="chart-card">
+        <view class="chart-legend">
+          <view class="legend-item"><view class="legend-dot green-dot"></view><text>{{stats.category.receiveLabel}}</text></view>
+          <view class="legend-item"><view class="legend-dot red-dot"></view><text>{{stats.category.sendLabel}}</text></view>
+        </view>
+        <view class="chart-area">
+          <view class="y-axis">
+            <text
+              class="y-label"
+              wx:for="{{stats.yLabels}}"
+              wx:key="label"
+              style="top: {{item.top}}rpx;"
+            >{{item.label}}</text>
+          </view>
+          <view class="plot">
+            <view class="grid-lines">
+              <view
+                wx:for="{{stats.yLabels}}"
+                wx:key="label"
+                style="top: {{item.top}}rpx;"
+              ></view>
+            </view>
+            <block wx:if="{{stats.chartScrollable}}">
+              <scroll-view class="bar-scroll" scroll-x enhanced show-scrollbar="{{true}}" style="width: {{stats.chartViewportWidth}}rpx;">
+                <view class="bar-groups scrollable" style="width: {{stats.chartScrollWidth}}rpx;">
+                  <view class="bar-group" wx:for="{{stats.chartData}}" wx:key="label" style="width: {{stats.chartGroupWidth}}rpx;">
+                    <view class="bars">
+                      <view wx:if="{{item.hasReceive}}" class="bar green-bar" style="height: {{item.receiveHeight}}rpx;"></view>
+                      <view wx:if="{{item.hasSend}}" class="bar red-bar" style="height: {{item.sendHeight}}rpx;"></view>
+                    </view>
+                    <text class="x-label">{{item.label}}</text>
+                  </view>
+                </view>
+              </scroll-view>
+            </block>
+            <block wx:else>
+              <view class="bar-groups fitted {{stats.chartCountClass}}">
+                <view class="bar-group" wx:for="{{stats.chartData}}" wx:key="label" style="width: {{stats.chartGroupWidth}}rpx;">
+                  <view class="bars">
+                    <view wx:if="{{item.hasReceive}}" class="bar green-bar" style="height: {{item.receiveHeight}}rpx;"></view>
+                    <view wx:if="{{item.hasSend}}" class="bar red-bar" style="height: {{item.sendHeight}}rpx;"></view>
+                  </view>
+                  <text class="x-label">{{item.label}}</text>
+                </view>
+              </view>
+            </block>
+          </view>
+        </view>
+      </view>
+
+      <view class="section-title records-title">
+        <image class="title-icon title-svg-icon" src="/assets/icons/stats-total-records.svg" mode="aspectFit"></image>
+        <text>来往记录</text>
+      </view>
+
+      <view class="table-card">
+        <view class="table-row table-head">
+          <text class="table-col-year">{{stats.recordTableFirstColumn}}</text>
+          <text class="table-col-receive">收到</text>
+          <text class="table-col-send">送出</text>
+          <text class="table-col-balance table-balance-head">结余</text>
+          <text class="table-col-arrow"></text>
+        </view>
+        <view
+          class="table-row clickable"
+          wx:for="{{stats.periodStats}}"
+          wx:key="key"
+          data-period="{{item.key}}"
+          bindtap="goStatsRecords"
+          hover-class="tap-active"
+          hover-stay-time="80"
+        >
+          <text class="table-col-year year-cell">{{item.label}}</text>
+          <text class="table-col-receive green">{{item.receiveText}}</text>
+          <text class="table-col-send red">{{item.sendText}}</text>
+          <view class="table-col-balance table-balance black">
+            <text class="balance-sign">{{item.balanceNegative ? '-' : ''}}</text>
+            <text class="balance-currency">{{item.balanceCurrency}}</text>
+            <text class="balance-amount">{{item.balanceAmount}}</text>
+          </view>
+          <view class="table-col-arrow table-arrow"></view>
+        </view>
+        <view class="empty-records" wx:if="{{!stats.periodStats.length}}">暂无记录</view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <app-tabbar active="stats"></app-tabbar>
+</view>

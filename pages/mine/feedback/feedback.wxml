@@ -1,0 +1,52 @@
+<navigation-bar title="意见反馈" color="#111111" background="transparent"></navigation-bar>
+
+<view class="feedback-page">
+  <view class="email-card">
+    <image class="mail-icon" src="/assets/icons/mine-feedback-email.svg" mode="aspectFit"></image>
+    <view class="email-main">
+      <view class="email-head">
+        <text class="email-title">邮箱</text>
+      </view>
+      <view class="email-value">{{email}}</view>
+    </view>
+    <text class="copy-text" bindtap="copyEmail">点击复制</text>
+  </view>
+  <view class="type-card">
+    <view class="card-title"><text class="required-star">*</text><text>反馈类型</text></view>
+    <view class="type-options">
+      <view
+        class="type-option {{selectedType == item.key ? 'active' : ''}} {{bouncingType == item.key ? 'bounce' : ''}}"
+        wx:for="{{feedbackTypes}}"
+        wx:key="key"
+        data-key="{{item.key}}"
+        bindtap="selectType"
+      >
+        {{item.label}}
+      </view>
+    </view>
+  </view>
+
+  <view class="content-card">
+    <view class="card-title"><text class="required-star">*</text><text>反馈内容</text></view>
+    <textarea
+      class="feedback-textarea"
+      value="{{content}}"
+      maxlength="501"
+      placeholder="请详细描述您遇到的问题或建议"
+      placeholder-class="feedback-placeholder"
+      bindinput="updateContent"
+      show-confirm-bar="{{false}}"
+    ></textarea>
+    <view class="content-count">{{contentCount}}/500</view>
+  </view>
+
+  <view class="submit-button" bindtap="submitFeedback" hover-class="tap-active" hover-stay-time="80">提交反馈</view>
+
+  <view class="dialog-mask" wx:if="{{showRequiredDialog}}" bindtap="closeRequiredDialog">
+    <view class="required-dialog" catchtap="noop">
+      <view class="dialog-title">提示</view>
+      <view class="dialog-text">请先选择反馈类型并填写反馈内容</view>
+      <view class="dialog-button" bindtap="closeRequiredDialog">知道了</view>
+    </view>
+  </view>
+</view>

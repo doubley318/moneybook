@@ -1,0 +1,26 @@
+<navigation-bar title="全部记录" color="#111111" background="#fbf5ec"></navigation-bar>
+
+<view class="records-page" bindtap="closeTypeDropdown">
+  <record-type-filter
+    options="{{typeOptions}}"
+    selected-type="{{selectedType}}"
+    selected-label="{{selectedTypeLabel}}"
+    open="{{typeDropdownOpen}}"
+    sort-options="{{sortOptions}}"
+    selected-sort="{{selectedSort}}"
+    sort-open="{{sortDropdownOpen}}"
+    sort-label="{{sortLabel}}"
+    bind:toggle="toggleTypeDropdown"
+    bind:select="selectType"
+    bind:sorttoggle="toggleSortDropdown"
+    bind:sortselect="selectSort"
+  ></record-type-filter>
+
+  <scroll-view class="records-scroll" scroll-y enhanced show-scrollbar="{{false}}">
+    <record-group-list
+      year-groups="{{yearGroups}}"
+      truncate-text="{{true}}"
+      bind:recordtap="goRecordDetail"
+    ></record-group-list>
+  </scroll-view>
+</view>

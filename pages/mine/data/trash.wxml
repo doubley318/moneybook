@@ -1,0 +1,37 @@
+<navigation-bar title="回收站" color="#111111" background="transparent"></navigation-bar>
+
+<view class="trash-page">
+  <scroll-view class="trash-scroll" scroll-y enhanced show-scrollbar="{{false}}">
+    <view class="trash-card">
+      <view class="trash-head">
+        <view class="trash-title">回收站</view>
+        <view class="manage-button" bindtap="toggleManage">{{managing ? '取消' : '管理'}}</view>
+      </view>
+      <view class="trash-subtitle">回收站的记录将在30天后自动删除</view>
+      <view class="trash-list {{!yearGroups.length ? 'empty' : ''}}">
+        <record-group-list
+          yearGroups="{{yearGroups}}"
+          hide-year="{{true}}"
+          selectable="{{managing}}"
+          disable-tap="{{true}}"
+          hide-arrow="{{true}}"
+          center-empty="{{true}}"
+          bind:recordtap="handleRecordTap"
+          bind:selectrecord="handleSelectRecord"
+        ></record-group-list>
+      </view>
+    </view>
+    <view class="trash-bottom-space"></view>
+  </scroll-view>
+
+  <view class="manage-bar" wx:if="{{managing}}">
+    <view class="select-all" bindtap="toggleSelectAll">
+      <view class="select-dot {{allSelected ? 'checked' : ''}}"><view></view></view>
+      <text>全选</text>
+    </view>
+    <view class="manage-actions">
+      <view class="manage-action restore" bindtap="restoreSelected">恢复</view>
+      <view class="manage-action delete" bindtap="deleteSelected">删除</view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,7 @@
+{
+  "usingComponents": {
+    "navigation-bar": "/components/navigation-bar/navigation-bar",
+    "record-type-filter": "/components/record-type-filter/record-type-filter",
+    "record-group-list": "/components/record-group-list/record-group-list"
+  }
+}

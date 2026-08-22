@@ -1,0 +1,6 @@
+{
+  "usingComponents": {
+    "navigation-bar": "/components/navigation-bar/navigation-bar",
+    "record-group-list": "/components/record-group-list/record-group-list"
+  }
+}

@@ -1,0 +1,69 @@
+<navigation-bar title="礼金记录本" back="{{false}}" color="#111111" background="transparent"></navigation-bar>
+
+<view class="home-page">
+  <scroll-view class="home-scroll" scroll-y type="list" enhanced show-scrollbar="{{false}}">
+    <view class="home-content">
+      <view class="summary-card">
+        <view class="section-title">
+          <image class="home-stats-icon" src="/assets/icons/home-stats.svg" mode="aspectFit"></image>
+          <text>来往统计</text>
+        </view>
+
+        <view class="summary-grid">
+          <view class="summary-item">
+            <image class="summary-visual summary-image-icon" src="/assets/icons/home-red-packet.svg" mode="aspectFit"></image>
+            <view class="summary-name">礼金</view>
+            <view class="summary-data">
+              <view class="summary-row"><text class="summary-label">收礼：</text><text class="summary-value income">{{summary.cashReceive}}</text></view>
+              <view class="summary-row"><text class="summary-label">送礼：</text><text class="summary-value expense">{{summary.cashSend}}</text></view>
+            </view>
+          </view>
+
+          <view class="summary-item">
+            <image class="summary-visual summary-image-icon gift-icon" src="/assets/icons/home-gift-box.svg" mode="aspectFit"></image>
+            <view class="summary-name">礼物</view>
+            <view class="summary-data">
+              <view class="summary-row"><text class="summary-label">收礼：</text><text class="summary-value income">{{summary.giftReceive}}</text></view>
+              <view class="summary-row"><text class="summary-label">送礼：</text><text class="summary-value expense">{{summary.giftSend}}</text></view>
+            </view>
+          </view>
+
+          <view class="summary-item">
+            <image class="summary-visual summary-image-icon" src="/assets/icons/home-meal.svg" mode="aspectFit"></image>
+            <view class="summary-name">请客</view>
+            <view class="summary-data">
+              <view class="summary-row"><text class="summary-label">收到：</text><text class="summary-value income">{{summary.mealReceive}}</text></view>
+              <view class="summary-row"><text class="summary-label">送出：</text><text class="summary-value expense">{{summary.mealSend}}</text></view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="records-card">
+        <view class="records-head">
+          <view class="section-title">
+            <image class="recent-icon" src="/assets/icons/recent-records.svg" mode="aspectFit"></image>
+            <text>最近记录</text>
+          </view>
+          <view class="all-records" bindtap="goAllRecords" hover-class="tap-active" hover-stay-time="80">
+            <text>全部记录</text>
+            <view class="chevron"></view>
+          </view>
+        </view>
+
+        <view class="recent-list {{!records.length ? 'empty' : ''}}">
+          <record-group-list
+            plain="{{true}}"
+            embedded="{{true}}"
+            records="{{records}}"
+            truncate-text="{{true}}"
+            center-empty="{{true}}"
+            bind:recordtap="goRecordDetail"
+          ></record-group-list>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <app-tabbar active="index"></app-tabbar>
+</view>

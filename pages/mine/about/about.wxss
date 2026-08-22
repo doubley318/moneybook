@@ -1,0 +1,63 @@
+page {
+  min-height: 100vh;
+  color: #111111;
+  background:
+    radial-gradient(circle at 14% 0%, rgba(221, 198, 161, 0.18), transparent 34%),
+    linear-gradient(180deg, #fbf5ec 0%, #f8f0e6 100%);
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+}
+
+.about-page {
+  min-height: 100vh;
+  padding: 70rpx 30rpx 80rpx;
+  box-sizing: border-box;
+}
+
+.about-card {
+  overflow: hidden;
+  border: 2rpx solid #d4c8b8;
+  border-radius: 28rpx;
+  background: rgba(255, 255, 255, 0.72);
+  box-sizing: border-box;
+}
+
+.about-row {
+  min-height: 86rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 44rpx;
+  border-bottom: 1rpx solid #d7cec2;
+  color: #1f1b18;
+  font-size: 28rpx;
+  font-weight: 500;
+  box-sizing: border-box;
+}
+
+.about-row:last-child {
+  border-bottom: 0;
+}
+
+.row-arrow {
+  width: 40rpx;
+  height: 40rpx;
+  flex: none;
+  position: relative;
+}
+
+.row-arrow::before {
+  content: "";
+  position: absolute;
+  left: 9rpx;
+  top: 7rpx;
+  width: 20rpx;
+  height: 20rpx;
+  border-right: 4rpx solid #b4aea8;
+  border-top: 4rpx solid #b4aea8;
+  transform: rotate(45deg);
+  box-sizing: border-box;
+}
+
+.tap-active {
+  opacity: 0.68;
+}

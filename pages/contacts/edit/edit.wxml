@@ -1,0 +1,33 @@
+<view class="contact-edit-page">
+  <view class="top-space"></view>
+  <view class="back-btn" bindtap="goBack"></view>
+  <view class="page-title">编辑联系人</view>
+  <view class="edit-title">个人信息</view>
+
+  <view class="info-card">
+    <view class="field-label">姓名</view>
+    <input
+      class="name-input"
+      value="{{name}}"
+      bindinput="updateName"
+      placeholder="请输入对方姓名"
+      placeholder-class="input-placeholder"
+    />
+  </view>
+
+  <view class="action-row">
+    <view class="save-button" bindtap="saveContact">保存</view>
+    <view class="delete-contact-button {{deleting ? 'disabled' : ''}}" bindtap="openDeleteDialog">删除联系人</view>
+  </view>
+
+  <view class="dialog-mask" wx:if="{{showDeleteDialog}}">
+    <view class="delete-dialog">
+      <view class="dialog-title">删除联系人</view>
+      <view class="dialog-text">与该联系人所有来往记录将被删除，删除的记录移入回收站</view>
+      <view class="dialog-actions">
+        <view class="dialog-button cancel" bindtap="closeDeleteDialog">取消</view>
+        <view class="dialog-button confirm {{deleting ? 'disabled' : ''}}" bindtap="confirmDelete">确定</view>
+      </view>
+    </view>
+  </view>
+</view>

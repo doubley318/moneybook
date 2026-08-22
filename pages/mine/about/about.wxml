@@ -1,0 +1,14 @@
+<navigation-bar title="关于我们" color="#111111" background="transparent"></navigation-bar>
+
+<view class="about-page">
+  <view class="about-card">
+    <view class="about-row" bindtap="showVersion" hover-class="tap-active" hover-stay-time="80">
+      <text>版本号</text>
+      <view class="row-arrow"></view>
+    </view>
+    <view class="about-row" bindtap="showHelp" hover-class="tap-active" hover-stay-time="80">
+      <text>使用帮助</text>
+      <view class="row-arrow"></view>
+    </view>
+  </view>
+</view>

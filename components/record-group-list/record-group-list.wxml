@@ -1,0 +1,71 @@
+<view class="record-list-module {{embedded ? 'embedded' : ''}} {{plain ? 'plain' : ''}}">
+  <block wx:if="{{plain}}">
+    <view class="day-card plain-card">
+      <view
+        class="record-row"
+        wx:for="{{displayRecords}}"
+        wx:key="id"
+        wx:for-item="record"
+        data-id="{{record.id}}"
+        bindtap="handleRecordTap"
+        hover-class="{{disableTap && !selectable ? 'none' : 'tap-active'}}"
+        hover-stay-time="80"
+      >
+        <view wx:if="{{selectable}}" class="record-check {{record.selected ? 'checked' : ''}}">
+          <view></view>
+        </view>
+        <view class="record-tag tag-{{record.typeKey}}">{{record.type}}</view>
+        <view class="record-main">
+          <view class="record-name">{{record.name}}</view>
+          <view class="record-meta">
+            <text class="record-date">{{record.date}}</text>
+            <text class="record-scene">{{record.displayScene || record.scene}}</text>
+          </view>
+        </view>
+        <view class="record-value {{record.valueClass}}">{{record.displayValue || record.value}}</view>
+        <view wx:if="{{!hideArrow}}" class="record-arrow"></view>
+      </view>
+    </view>
+
+    <view wx:if="{{!records.length}}" class="empty-state {{centerEmpty ? 'center-empty' : ''}}">暂无记录</view>
+  </block>
+
+  <block wx:else>
+    <block wx:for="{{displayYearGroups}}" wx:key="year" wx:for-item="yearGroup">
+      <view class="year-title" wx:if="{{!hideYear}}">{{yearGroup.year}}</view>
+
+      <block wx:for="{{yearGroup.days}}" wx:key="dateLabel" wx:for-item="dayGroup">
+        <view class="day-title">{{dayGroup.dateLabel}}</view>
+
+        <view class="day-card">
+          <view
+            class="record-row"
+            wx:for="{{dayGroup.records}}"
+            wx:key="id"
+            wx:for-item="record"
+            data-id="{{record.id}}"
+            bindtap="handleRecordTap"
+            hover-class="{{disableTap && !selectable ? 'none' : 'tap-active'}}"
+            hover-stay-time="80"
+          >
+            <view wx:if="{{selectable}}" class="record-check {{record.selected ? 'checked' : ''}}">
+              <view></view>
+            </view>
+            <view class="record-tag tag-{{record.typeKey}}">{{record.type}}</view>
+            <view class="record-main">
+              <view class="record-name">{{record.name}}</view>
+              <view class="record-meta">
+                <text class="record-date">{{record.date}}</text>
+                <text class="record-scene">{{record.displayScene || record.scene}}</text>
+              </view>
+            </view>
+            <view class="record-value {{record.valueClass}}">{{record.displayValue || record.value}}</view>
+            <view wx:if="{{!hideArrow}}" class="record-arrow"></view>
+          </view>
+        </view>
+      </block>
+    </block>
+
+    <view wx:if="{{!yearGroups.length}}" class="empty-state {{centerEmpty ? 'center-empty' : ''}}">暂无记录</view>
+  </block>
+</view>

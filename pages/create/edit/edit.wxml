@@ -1,0 +1,195 @@
+<view class="create-page">
+  <view class="top-space"></view>
+  <view class="back-btn" bindtap="goBack"></view>
+
+  <view class="type-tabs">
+    <view wx:for="{{tabs}}" wx:key="key" class="type-tab {{activeType == item.key ? 'active' : ''}}" data-type="{{item.key}}" bindtap="switchType">
+      {{item.name}}
+    </view>
+  </view>
+
+  <scroll-view class="create-scroll" scroll-y enhanced show-scrollbar="{{false}}">
+    <view class="form-inner">
+      <view class="form-field">
+        <view class="label">
+          <text class="required-star">*</text><text>姓名</text>
+        </view>
+        <input class="input-box" value="{{form.name}}" data-field="name" bindinput="updateField" placeholder="请输入对方姓名" placeholder-class="placeholder" />
+      </view>
+
+      <view class="form-field">
+        <view class="label">
+          <text class="required-star">*</text><text>来往</text>
+        </view>
+        <view class="segmented">
+          <view class="segment receive {{giftType == 'receive' ? 'active' : ''}}" data-type="receive" bindtap="chooseGiftType">收礼</view>
+          <view class="segment send {{giftType == 'send' ? 'active' : ''}}" data-type="send" bindtap="chooseGiftType">送礼</view>
+        </view>
+      </view>
+
+      <view class="form-field">
+        <view class="label">
+          <text class="required-star">*</text><text>日期</text>
+        </view>
+        <view class="date-box" bindtap="openCalendar">
+          <image class="date-icon" src="/assets/icons/create-date.svg" mode="aspectFit"></image>
+          <text>{{form.date}}</text>
+        </view>
+      </view>
+
+      <view class="form-field" wx:if="{{activeType == 'cash'}}">
+        <view class="label"><text class="required-star">*</text><text>金额</text></view>
+        <input class="input-box" type="digit" value="{{form.amount}}" data-field="amount" bindinput="updateField" placeholder="请输入金额" placeholder-class="placeholder" />
+      </view>
+
+      <block wx:if="{{activeType == 'gift'}}">
+        <view class="form-field">
+          <view class="label"><text class="required-star">*</text><text>礼物</text></view>
+          <input class="input-box" value="{{form.gift}}" data-field="gift" bindinput="updateField" placeholder="请输入礼物" placeholder-class="placeholder" />
+        </view>
+      </block>
+
+      <block wx:if="{{activeType == 'meal'}}">
+        <view class="form-field">
+          <view class="label"><text class="required-star">*</text><text>请客</text></view>
+          <input class="input-box" value="{{form.mealContent}}" data-field="mealContent" bindinput="updateField" placeholder="请输入请客，如吃饭、按摩..." placeholder-class="placeholder" />
+        </view>
+      </block>
+
+      <view class="form-field scene-field">
+        <view class="label">
+          <text class="required-star">*</text><text>事由</text>
+        </view>
+        <view class="scene-tags">
+          <view
+            wx:for="{{sceneOptions}}"
+            wx:key="*this"
+            class="scene-tag {{selectedSceneTag == item ? 'active' : ''}}"
+            data-scene="{{item}}"
+            bindtap="chooseSceneTag"
+            hover-class="tap-active"
+            hover-stay-time="80"
+          >
+            {{item}}
+          </view>
+        </view>
+        <input class="input-box scene-input" value="{{form.scene}}" data-field="scene" bindinput="updateField" placeholder="请输入事由" placeholder-class="placeholder" />
+      </view>
+
+      <view class="form-field" wx:if="{{activeType == 'gift'}}">
+        <view class="label">预估值</view>
+        <input class="input-box" type="digit" value="{{form.estimatedValue}}" data-field="estimatedValue" bindinput="updateField" placeholder="请输入预估值" placeholder-class="placeholder" />
+      </view>
+
+      <view class="form-field" wx:if="{{activeType == 'meal'}}">
+        <view class="label">消费金额</view>
+        <input class="input-box" type="digit" value="{{form.cost}}" data-field="cost" bindinput="updateField" placeholder="请输入消费金额" placeholder-class="placeholder" />
+      </view>
+
+      <view class="form-field">
+        <view class="label-row">
+          <view class="label">备注</view>
+          <view class="counter">{{form.remark.length}}/200</view>
+        </view>
+        <input maxlength="200" class="input-box" value="{{form.remark}}" data-field="remark" bindinput="updateField" placeholder="" placeholder-class="placeholder" />
+      </view>
+
+      <view class="image-area">
+        <view class="label-row">
+          <view class="label">图片</view>
+          <view class="counter">{{images.length}}/3</view>
+        </view>
+        <view class="image-list">
+          <view class="image-thumb" wx:for="{{images}}" wx:key="*this">
+            <image src="{{item}}" mode="aspectFill"></image>
+            <view class="remove" data-index="{{index}}" bindtap="removeImage">×</view>
+          </view>
+          <view class="add-photo" wx:if="{{images.length < 3}}" bindtap="chooseImage">
+            <view class="camera-mark"><view></view></view>
+            <text>添加图片</text>
+          </view>
+        </view>
+      </view>
+
+      <button class="save-btn" disabled="{{saving}}" bindtap="saveRecord">保存</button>
+    </view>
+  </scroll-view>
+
+  <view class="calendar-mask" wx:if="{{calendarVisible}}" bindtap="closeCalendar">
+    <view class="calendar-card" catchtap="noop">
+      <view class="calendar-head">
+        <view class="calendar-title" catchtap="toggleCalendarPicker">
+          <text>{{calendarYear}}年{{calendarMonth + 1}}月</text>
+          <image class="calendar-dropdown {{calendarPickerVisible ? 'open' : ''}}" src="/assets/icons/calendar-dropdown.svg" mode="aspectFit"></image>
+        </view>
+        <view class="month-actions">
+          <view class="month-btn" catchtap="prevMonth">
+            <image class="month-icon" src="/assets/icons/calendar-prev.svg" mode="aspectFit"></image>
+          </view>
+          <view class="month-btn" catchtap="nextMonth">
+            <image class="month-icon" src="/assets/icons/calendar-next.svg" mode="aspectFit"></image>
+          </view>
+        </view>
+      </view>
+
+      <view class="week-row">
+        <text wx:for="{{weekLabels}}" wx:key="*this">{{item}}</text>
+      </view>
+
+      <view class="day-grid">
+        <view
+          wx:for="{{calendarDays}}"
+          wx:key="key"
+          class="day-cell {{item.muted ? 'muted' : ''}} {{item.selected ? 'selected' : ''}} {{item.today ? 'today' : ''}}"
+          data-year="{{item.year}}"
+          data-month="{{item.month}}"
+          data-date="{{item.date}}"
+          catchtap="chooseDate"
+        >
+          {{item.day}}
+        </view>
+      </view>
+
+      <view class="calendar-actions">
+        <view class="calendar-action" catchtap="goToday">回到今天</view>
+        <view class="calendar-action primary" catchtap="confirmDate">确定</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="month-picker-mask" wx:if="{{calendarPickerVisible}}" catchtap="cancelCalendarPicker">
+    <view class="month-picker-card" catchtap="noop">
+      <view class="month-picker-title">选择年月</view>
+      <view class="calendar-picker">
+        <scroll-view class="picker-column" scroll-y enhanced show-scrollbar="{{false}}" scroll-into-view="{{pickerYearIntoView}}">
+          <view
+            id="year-option-{{index}}"
+            class="picker-option {{pendingCalendarPickerValue[0] == index ? 'selected' : ''}}"
+            wx:for="{{yearOptions}}"
+            wx:key="*this"
+            data-index="{{index}}"
+            bindtap="chooseCalendarYear"
+          >
+            {{item}}年
+          </view>
+        </scroll-view>
+        <scroll-view class="picker-column" scroll-y enhanced show-scrollbar="{{false}}" scroll-into-view="{{pickerMonthIntoView}}">
+          <view
+            id="month-option-{{index}}"
+            class="picker-option {{pendingCalendarPickerValue[1] == index ? 'selected' : ''}}"
+            wx:for="{{monthOptions}}"
+            wx:key="*this"
+            data-index="{{index}}"
+            bindtap="chooseCalendarMonth"
+          >
+            {{item}}月
+          </view>
+        </scroll-view>
+      </view>
+      <view class="month-picker-actions">
+        <view class="month-picker-button" bindtap="cancelCalendarPicker">取消</view>
+        <view class="month-picker-button primary" bindtap="confirmCalendarPicker">确定</view>
+      </view>
+    </view>
+  </view>
+</view>

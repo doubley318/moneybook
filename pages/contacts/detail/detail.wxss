@@ -1,0 +1,249 @@
+page {
+  min-height: 100vh;
+  color: #1f1b18;
+  background:
+    radial-gradient(circle at 14% 0%, rgba(221, 198, 161, 0.2), transparent 34%),
+    linear-gradient(180deg, #fbf5ec 0%, #f8f0e6 100%);
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+}
+
+.detail-page {
+  min-height: 100vh;
+  padding: 34rpx 30rpx 70rpx;
+  box-sizing: border-box;
+}
+
+.contact-overview,
+.records-card {
+  border: 2rpx solid #eadfce;
+  border-radius: 24rpx;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 12rpx 28rpx rgba(122, 88, 44, 0.06);
+  box-sizing: border-box;
+}
+
+.contact-overview {
+  padding: 30rpx 30rpx 24rpx;
+}
+
+.overview-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24rpx;
+  min-height: 112rpx;
+  padding: 8rpx 0 26rpx;
+  border-bottom: 1rpx solid #eadfce;
+  box-sizing: border-box;
+}
+
+.contact-name-title {
+  flex: 1;
+  min-width: 0;
+  color: #111111;
+  font-size: 44rpx;
+  font-weight: 800;
+  line-height: 56rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.contact-count-text {
+  flex: none;
+  color: #8d8780;
+  font-size: 24rpx;
+  font-weight: 400;
+  line-height: 34rpx;
+  white-space: nowrap;
+}
+
+.section-title {
+  color: #1f1b18;
+  font-size: 31rpx;
+  font-weight: 700;
+  line-height: 42rpx;
+}
+
+.records-title-divider {
+  height: 1rpx;
+  margin-top: 22rpx;
+  background: #eadfce;
+}
+
+.summary-table {
+  padding-top: 20rpx;
+  box-sizing: border-box;
+}
+
+.summary-row {
+  min-height: 54rpx;
+  display: flex;
+  align-items: center;
+}
+
+.summary-row view {
+  flex: 1;
+  text-align: center;
+}
+
+.summary-row view:first-child {
+  flex: none;
+  width: 96rpx;
+  text-align: left;
+}
+
+.summary-head {
+  color: #1f1b18;
+  font-size: 25rpx;
+  font-weight: 600;
+}
+
+.summary-name {
+  color: #1f1b18;
+  font-size: 28rpx;
+  font-weight: 600;
+}
+
+.summary-value {
+  font-size: 28rpx;
+  line-height: 42rpx;
+  font-weight: 700;
+}
+
+.receive {
+  color: #2f7442;
+}
+
+.send {
+  color: #c52e2b;
+}
+
+.records-card {
+  margin-top: 28rpx;
+  padding: 28rpx 26rpx 8rpx;
+}
+
+.record-row {
+  min-height: 108rpx;
+  display: flex;
+  align-items: center;
+  border-bottom: 1rpx solid #eadfce;
+}
+
+.record-row:last-child {
+  border-bottom: 0;
+}
+
+.record-tag {
+  width: 78rpx;
+  height: 44rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  border-radius: 8rpx;
+  font-size: 23rpx;
+  font-weight: 600;
+}
+
+.tag-cash {
+  color: #c52e2b;
+  background: #f6dedd;
+}
+
+.tag-gift {
+  color: #9a7040;
+  background: #eee6dc;
+}
+
+.tag-meal {
+  color: #2f7442;
+  background: #e7eee2;
+}
+
+.record-main {
+  flex: 1;
+  min-width: 0;
+  padding-left: 22rpx;
+}
+
+.record-scene {
+  color: #111111;
+  font-size: 28rpx;
+  font-weight: 600;
+  line-height: 38rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.record-date {
+  color: #817b73;
+  font-size: 22rpx;
+  line-height: 32rpx;
+  margin-top: 4rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.record-value {
+  max-width: 210rpx;
+  padding-left: 14rpx;
+  font-size: 27rpx;
+  font-weight: 600;
+  line-height: 38rpx;
+  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.record-arrow {
+  width: 42rpx;
+  height: 42rpx;
+  flex: none;
+  position: relative;
+}
+
+.record-arrow::before {
+  content: "";
+  position: absolute;
+  left: 13rpx;
+  top: 11rpx;
+  width: 16rpx;
+  height: 16rpx;
+  border-right: 4rpx solid #9b9b9b;
+  border-top: 4rpx solid #9b9b9b;
+  transform: rotate(45deg);
+}
+
+.action-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 32rpx;
+}
+
+.edit-button,
+.add-button {
+  width: 48%;
+  height: 82rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2rpx solid #eadfce;
+  border-radius: 18rpx;
+  background: rgba(255, 255, 255, 0.9);
+  font-size: 29rpx;
+  font-weight: 600;
+  box-sizing: border-box;
+}
+
+.edit-button {
+  color: #1f1b18;
+}
+
+.add-button {
+  color: #2f7442;
+}

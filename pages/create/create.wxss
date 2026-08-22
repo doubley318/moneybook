@@ -1,0 +1,87 @@
+page {
+  height: 100vh;
+  overflow: hidden;
+  color: #111111;
+  background:
+    radial-gradient(circle at 14% 0%, rgba(221, 198, 161, 0.2), transparent 34%),
+    linear-gradient(180deg, #fbf5ec 0%, #f8f0e6 100%);
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+}
+
+.create-entry-page {
+  height: calc(100vh - 94px);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.entry-content {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 42rpx 30rpx calc(148rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+  transform: translateY(-56rpx);
+}
+
+.entry-title {
+  color: #1f1b18;
+  font-size: 36rpx;
+  font-weight: 700;
+  line-height: 50rpx;
+  margin: 0 0 54rpx 64rpx;
+  text-align: left;
+}
+
+.type-grid {
+  display: flex;
+  align-items: stretch;
+}
+
+.type-item {
+  flex: 1;
+  min-width: 0;
+  min-height: 198rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.type-item + .type-item::before {
+  display: none;
+}
+
+.type-visual {
+  width: 96rpx;
+  height: 88rpx;
+  position: relative;
+  margin-bottom: 28rpx;
+  box-sizing: border-box;
+}
+
+.type-icon {
+  display: block;
+}
+
+.type-icon.gift-icon {
+  width: 88rpx;
+  height: 82rpx;
+  margin-top: 0;
+}
+
+.type-name {
+  color: #1f1b18;
+  font-size: 34rpx;
+  font-weight: 700;
+  line-height: 44rpx;
+}
+
+.tap-active {
+  opacity: 0.68;
+}

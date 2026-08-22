@@ -1,0 +1,47 @@
+<view class="filter-module" catchtap="noop">
+  <view class="filter-bar">
+    <view class="filter-item" catchtap="toggleType">
+      <image class="filter-svg-icon" src="/assets/icons/filter-all-types.svg" mode="aspectFit"></image>
+      <text>{{selectedLabel}}</text>
+      <view class="down-icon {{open ? 'up' : ''}}"></view>
+    </view>
+
+    <view class="filter-divider"></view>
+
+    <view class="filter-item" catchtap="toggleSort">
+      <view class="sort-icon">
+        <view class="sort-line long"></view>
+        <view class="sort-line short"></view>
+        <view class="sort-arrow"></view>
+      </view>
+      <text>{{sortLabel}}</text>
+      <view class="down-icon {{sortOpen ? 'up' : ''}}"></view>
+    </view>
+  </view>
+
+  <view wx:if="{{open}}" class="type-dropdown">
+    <view
+      class="type-option {{selectedType == item.value ? 'active' : ''}}"
+      wx:for="{{options}}"
+      wx:key="value"
+      data-value="{{item.value}}"
+      catchtap="selectType"
+    >
+      <text>{{item.label}}</text>
+      <view wx:if="{{selectedType == item.value}}" class="check-icon"></view>
+    </view>
+  </view>
+
+  <view wx:if="{{sortOpen}}" class="type-dropdown sort-dropdown">
+    <view
+      class="type-option {{selectedSort == item.value ? 'active' : ''}}"
+      wx:for="{{sortOptions}}"
+      wx:key="value"
+      data-value="{{item.value}}"
+      catchtap="selectSort"
+    >
+      <text>{{item.label}}</text>
+      <view wx:if="{{selectedSort == item.value}}" class="check-icon"></view>
+    </view>
+  </view>
+</view>

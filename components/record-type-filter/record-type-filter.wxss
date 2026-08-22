@@ -1,0 +1,154 @@
+:host {
+  display: block;
+  position: relative;
+  z-index: 5;
+}
+
+.filter-module {
+  position: relative;
+}
+
+.filter-bar {
+  height: 72rpx;
+  display: flex;
+  align-items: center;
+  border-top: 1rpx solid rgba(222, 212, 199, 0.95);
+  border-bottom: 1rpx solid rgba(222, 212, 199, 0.95);
+  background: rgba(251, 245, 236, 0.92);
+}
+
+.filter-item {
+  flex: 1;
+  height: 72rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16rpx;
+  color: #111111;
+  font-size: 28rpx;
+  font-weight: 500;
+}
+
+.filter-divider {
+  flex: none;
+  width: 1rpx;
+  height: 40rpx;
+  background: #e1d8cb;
+}
+
+.filter-svg-icon {
+  width: 30rpx;
+  height: 30rpx;
+  display: block;
+  flex: none;
+}
+
+.sort-icon {
+  width: 30rpx;
+  height: 32rpx;
+  position: relative;
+}
+
+.sort-line {
+  position: absolute;
+  right: 0;
+  height: 3rpx;
+  background: #111111;
+  border-radius: 3rpx;
+}
+
+.sort-line.long {
+  top: 5rpx;
+  width: 18rpx;
+}
+
+.sort-line.short {
+  top: 15rpx;
+  width: 12rpx;
+}
+
+.sort-arrow {
+  position: absolute;
+  left: 2rpx;
+  top: 4rpx;
+  width: 14rpx;
+  height: 22rpx;
+  border-left: 3rpx solid #111111;
+  box-sizing: border-box;
+}
+
+.sort-arrow::after {
+  content: "";
+  position: absolute;
+  left: -8rpx;
+  bottom: -1rpx;
+  width: 11rpx;
+  height: 11rpx;
+  border-left: 3rpx solid #111111;
+  border-bottom: 3rpx solid #111111;
+  transform: rotate(-45deg);
+}
+
+.down-icon {
+  width: 0;
+  height: 0;
+  margin-top: 4rpx;
+  border-left: 8rpx solid transparent;
+  border-right: 8rpx solid transparent;
+  border-top: 9rpx solid #9a948d;
+}
+
+.down-icon.up {
+  border-top: 0;
+  border-bottom: 9rpx solid #9a948d;
+}
+
+.type-dropdown {
+  position: absolute;
+  left: 34rpx;
+  top: 82rpx;
+  width: 284rpx;
+  padding: 12rpx;
+  border: 1rpx solid rgba(222, 212, 199, 0.96);
+  border-radius: 18rpx;
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 16rpx 38rpx rgba(103, 72, 38, 0.13);
+  box-sizing: border-box;
+  z-index: 20;
+}
+
+.sort-dropdown {
+  left: auto;
+  right: 34rpx;
+}
+
+.type-option {
+  height: 70rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20rpx;
+  border-radius: 14rpx;
+  color: #2a2520;
+  font-size: 27rpx;
+  font-weight: 500;
+  box-sizing: border-box;
+}
+
+.type-option + .type-option {
+  margin-top: 4rpx;
+}
+
+.type-option.active {
+  color: #c52e2b;
+  background: #f8e8e6;
+}
+
+.check-icon {
+  width: 18rpx;
+  height: 10rpx;
+  border-left: 4rpx solid #c52e2b;
+  border-bottom: 4rpx solid #c52e2b;
+  transform: rotate(-45deg);
+  box-sizing: border-box;
+}

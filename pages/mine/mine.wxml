@@ -1,0 +1,41 @@
+<navigation-bar title="我的" color="#111111" background="transparent" back="{{false}}"></navigation-bar>
+
+<view class="mine-page">
+  <scroll-view class="mine-scroll" scroll-y enhanced show-scrollbar="{{false}}">
+    <view class="mine-content">
+      <view class="profile-card" bindtap="editProfile" hover-class="tap-active" hover-stay-time="80">
+        <image class="avatar" src="{{user.avatar}}" mode="aspectFit"></image>
+        <view class="profile-info">
+          <view class="user-name">{{user.name}}</view>
+          <view class="user-id">ID：{{user.id}}</view>
+        </view>
+      </view>
+
+      <view class="menu-card">
+        <view
+          class="menu-row"
+          wx:for="{{menuItems}}"
+          wx:key="key"
+          data-key="{{item.key}}"
+          data-label="{{item.label}}"
+          bindtap="handleMenuTap"
+          hover-class="tap-active"
+          hover-stay-time="80"
+        >
+          <view class="menu-icon-box">
+            <image wx:if="{{item.iconSrc}}" class="menu-icon menu-svg-icon {{item.key == 'data' ? 'data-menu-icon' : ''}}" src="{{item.iconSrc}}" mode="aspectFit"></image>
+            <view wx:else class="menu-icon icon-{{item.icon}}">
+              <view></view>
+              <view></view>
+              <view></view>
+            </view>
+          </view>
+          <text>{{item.label}}</text>
+        </view>
+      </view>
+
+    </view>
+  </scroll-view>
+
+  <app-tabbar active="mine"></app-tabbar>
+</view>

@@ -1,0 +1,52 @@
+<navigation-bar title="联系人详情" color="#111111" background="transparent"></navigation-bar>
+
+<view class="detail-page" wx:if="{{contact}}">
+  <view class="contact-overview">
+    <view class="overview-head">
+      <view class="contact-name-title">{{contact.name}}</view>
+      <view class="contact-count-text">来往{{contact.count}}次</view>
+    </view>
+
+    <view class="summary-table">
+      <view class="summary-row summary-head">
+        <view></view>
+        <view>礼金</view>
+        <view>礼物</view>
+        <view>请客</view>
+      </view>
+      <view class="summary-row">
+        <view class="summary-name">送出</view>
+        <view class="summary-value send">¥{{contact.total.cashOut}}</view>
+        <view class="summary-value send">{{contact.total.giftOut}}次</view>
+        <view class="summary-value send">{{contact.total.mealOut}}次</view>
+      </view>
+      <view class="summary-row">
+        <view class="summary-name">收到</view>
+        <view class="summary-value receive">¥{{contact.total.cashIn}}</view>
+        <view class="summary-value receive">{{contact.total.giftIn}}次</view>
+        <view class="summary-value receive">{{contact.total.mealIn}}次</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="records-card">
+    <view class="section-title">来往记录</view>
+    <view class="records-title-divider"></view>
+    <view class="record-row" wx:for="{{contact.records}}" wx:key="id" data-id="{{item.id}}" bindtap="goRecordDetail">
+      <view class="record-tag tag-{{item.typeKey}}">{{item.type}}</view>
+      <view class="record-main">
+        <view class="record-scene">{{item.displayScene || item.scene}}</view>
+        <view class="record-date">{{item.date}}</view>
+      </view>
+      <view class="record-value {{item.direction == 'send' ? 'send' : 'receive'}}">{{item.displayValue || item.value}}</view>
+      <view class="record-arrow"></view>
+    </view>
+  </view>
+
+  <view class="action-row">
+    <view class="edit-button" bindtap="editContact">编辑联系人</view>
+    <view class="add-button" bindtap="addRecord">
+      新增记录
+    </view>
+  </view>
+</view>

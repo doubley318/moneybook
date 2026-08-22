@@ -1,0 +1,244 @@
+page {
+  min-height: 100vh;
+  color: #111111;
+  background:
+    radial-gradient(circle at 14% 0%, rgba(221, 198, 161, 0.18), transparent 34%),
+    linear-gradient(180deg, #fbf5ec 0%, #f8f0e6 100%);
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+}
+
+.feedback-page {
+  min-height: 100vh;
+  padding: 56rpx 30rpx 76rpx;
+  box-sizing: border-box;
+}
+
+.email-card,
+.type-card,
+.content-card {
+  border: 2rpx solid #d4c8b8;
+  border-radius: 28rpx;
+  background: rgba(255, 255, 255, 0.72);
+  box-sizing: border-box;
+}
+
+.email-card {
+  min-height: 132rpx;
+  display: flex;
+  align-items: center;
+  padding: 24rpx 38rpx;
+}
+
+.mail-icon {
+  width: 58rpx;
+  height: 58rpx;
+  flex: none;
+  display: block;
+}
+
+.email-main {
+  flex: 1;
+  min-width: 0;
+  padding-left: 28rpx;
+}
+
+.email-head {
+  display: flex;
+  align-items: center;
+}
+
+.email-title,
+.copy-text {
+  color: #9f9a94;
+  font-size: 26rpx;
+  font-weight: 600;
+  line-height: 36rpx;
+}
+
+.copy-text {
+  flex: none;
+  margin-left: 22rpx;
+  align-self: center;
+}
+
+.email-value {
+  margin-top: 8rpx;
+  color: #1f1b18;
+  font-size: 28rpx;
+  line-height: 38rpx;
+  white-space: nowrap;
+}
+
+.type-card {
+  margin-top: 44rpx;
+  padding: 28rpx 34rpx 30rpx;
+}
+
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+  color: #1f1b18;
+  font-size: 28rpx;
+  font-weight: 500;
+  line-height: 40rpx;
+}
+
+.required-star {
+  color: #d21b1b;
+  line-height: 40rpx;
+}
+
+.type-options {
+  display: flex;
+  gap: 14rpx;
+  margin-top: 22rpx;
+}
+
+.type-option {
+  height: 52rpx;
+  min-width: 112rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16rpx;
+  border: 2rpx solid #d4c8b8;
+  border-radius: 22rpx;
+  color: #1f1b18;
+  background: rgba(255, 255, 255, 0.9);
+  font-size: 24rpx;
+  font-weight: 500;
+  box-sizing: border-box;
+  transform: scale(1);
+  transition: box-shadow 220ms ease;
+}
+
+.type-option.active {
+  color: #ffffff;
+  border-color: #2d7a45;
+  background: #2d7a45;
+  box-shadow: 0 8rpx 18rpx rgba(45, 122, 69, 0.2);
+}
+
+.type-option.bounce {
+  animation: feedback-type-bounce 320ms ease-out both;
+}
+
+@keyframes feedback-type-bounce {
+  0% {
+    transform: scale(1);
+  }
+
+  42% {
+    transform: scale(0.92);
+  }
+
+  72% {
+    transform: scale(1.06);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.content-card {
+  min-height: 560rpx;
+  margin-top: 44rpx;
+  padding: 30rpx 34rpx 54rpx;
+  position: relative;
+}
+
+.feedback-textarea {
+  width: 100%;
+  height: 420rpx;
+  margin-top: 18rpx;
+  color: #1f1b18;
+  font-size: 30rpx;
+  line-height: 42rpx;
+  background: transparent;
+  box-sizing: border-box;
+}
+
+.feedback-placeholder {
+  color: #9f9a94;
+  font-size: 28rpx;
+}
+
+.content-count {
+  position: absolute;
+  right: 36rpx;
+  bottom: 26rpx;
+  color: #9f9a94;
+  font-size: 28rpx;
+  line-height: 36rpx;
+}
+
+.submit-button {
+  width: 520rpx;
+  height: 92rpx;
+  margin: 54rpx auto 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2rpx solid #d4c8b8;
+  border-radius: 46rpx;
+  color: #111111;
+  background: rgba(255, 255, 255, 0.72);
+  font-size: 32rpx;
+  font-weight: 700;
+  line-height: 92rpx;
+  box-sizing: border-box;
+}
+
+.dialog-mask {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(44, 36, 28, 0.28);
+  z-index: 100;
+}
+
+.required-dialog {
+  width: 560rpx;
+  overflow: hidden;
+  border-radius: 24rpx;
+  background: #fffdf9;
+  box-shadow: 0 18rpx 42rpx rgba(44, 36, 28, 0.2);
+}
+
+.dialog-title {
+  padding: 38rpx 42rpx 16rpx;
+  color: #111111;
+  font-size: 34rpx;
+  font-weight: 700;
+  text-align: center;
+}
+
+.dialog-text {
+  padding: 0 46rpx 36rpx;
+  color: #6f6861;
+  font-size: 26rpx;
+  line-height: 40rpx;
+  text-align: center;
+}
+
+.dialog-button {
+  height: 88rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-top: 1rpx solid #eadfce;
+  color: #2d7a45;
+  font-size: 29rpx;
+  font-weight: 600;
+}
+
+.tap-active {
+  opacity: 0.68;
+}

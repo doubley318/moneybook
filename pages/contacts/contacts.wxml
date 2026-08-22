@@ -1,0 +1,50 @@
+<navigation-bar title="联系人" back="{{false}}" color="#111111" background="transparent"></navigation-bar>
+
+<view class="contacts-page">
+  <scroll-view class="contacts-scroll" scroll-y show-scrollbar="{{false}}">
+    <view class="contacts-content">
+      <view class="search-wrap">
+        <view class="search-row">
+          <image class="search-svg-icon" src="/assets/icons/contacts-search.svg" mode="aspectFit"></image>
+          <view class="search-box">
+            <input
+              class="search-input"
+              value="{{keyword}}"
+              bindinput="updateKeyword"
+              placeholder="搜索联系人"
+              placeholder-class="search-placeholder"
+            />
+            <view class="clear-button" wx:if="{{keyword}}" bindtap="clearKeyword">×</view>
+          </view>
+        </view>
+
+        <view class="suggestion-panel" wx:if="{{suggestions.length}}">
+          <view class="suggestion-item" wx:for="{{suggestions}}" wx:key="id" data-id="{{item.id}}" bindtap="chooseSuggestion">
+            <view class="suggestion-name">{{item.name}}</view>
+            <view class="suggestion-meta">
+              <text class="suggestion-count">来往{{item.count}}次</text>
+              <text class="suggestion-amount">¥{{item.amount}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="contact-list">
+        <block wx:for="{{contactGroups}}" wx:key="letter" wx:for-item="group">
+          <view class="group-title">{{group.letter}}</view>
+          <view class="contact-row" wx:for="{{group.contacts}}" wx:key="id" wx:for-item="contact" data-id="{{contact.id}}" bindtap="goContactDetail">
+            <view class="contact-main">
+              <text class="contact-name">{{contact.name}}</text>
+              <text class="contact-count">来往{{contact.count}}次</text>
+            </view>
+            <view class="row-arrow" aria-role="button" aria-label="查看联系人"></view>
+          </view>
+        </block>
+      </view>
+
+      <view class="total-text">共{{total}}位联系人</view>
+    </view>
+  </scroll-view>
+
+  <app-tabbar active="contacts"></app-tabbar>
+</view>
