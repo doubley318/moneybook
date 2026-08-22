@@ -1,4 +1,7 @@
-const BASE_URL = 'http://127.0.0.1:3000/moneybook/api/v1'
+// 本地开发使用这个：
+// const BASE_URL = 'http://127.0.0.1:3000/moneybook/api/v1'
+// 上线使用这个：
+const BASE_URL = 'http://api.shyren.xyz:2523/moneybook/api/v1'
 
 function getToken() {
   try {
