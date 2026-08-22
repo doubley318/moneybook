@@ -1,5 +1,7 @@
+const { post } = require('./request')
+
 const TOKEN_KEY = 'moneybook_token'
-const LOCAL_TOKEN = 'local-dev-token'
+let loginPromise = null
 
 function getToken() {
   try {
@@ -24,7 +26,35 @@ function clearToken() {
 async function ensureToken(forceRefresh = false) {
   if (forceRefresh) clearToken()
   if (getToken()) return
-  setToken(LOCAL_TOKEN)
+  if (loginPromise) return loginPromise
+
+  loginPromise = new Promise((resolve, reject) => {
+    wx.login({
+      success: async (res) => {
+        try {
+          const result = await post('/auth/wx-login', {
+            code: res.code,
+            nickname: '',
+            avatar_url: ''
+          })
+          setToken(result.access_token)
+          resolve()
+        } catch (e) {
+          console.error('wx login failed', e)
+          reject(e)
+        } finally {
+          loginPromise = null
+        }
+      },
+      fail: (err) => {
+        console.error('wx.login failed', err)
+        loginPromise = null
+        reject(err)
+      }
+    })
+  })
+
+  return loginPromise
 }
 
 module.exports = { getToken, setToken, clearToken, ensureToken }
