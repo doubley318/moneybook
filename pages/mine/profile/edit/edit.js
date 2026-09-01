@@ -1,4 +1,13 @@
-const { getProfile, saveProfile } = require('../../../../data/profile')
+const {
+  fetchProfile,
+  getProfile,
+  updateRemoteProfile,
+  uploadAvatar
+} = require('../../../../data/profile')
+
+function isRemoteAvatar(avatar) {
+  return /^https?:\/\//.test(`${avatar || ''}`)
+}
 
 Page({
   data: {
@@ -9,48 +18,46 @@ Page({
   },
 
   onLoad() {
+    this.refreshProfile()
+  },
+
+  onShow() {
+    fetchProfile()
+      .then((profile) => this.applyProfile(profile))
+      .catch((error) => {
+        console.error('fetch profile failed', error)
+      })
+  },
+
+  refreshProfile() {
     const profile = getProfile()
+    this.applyProfile(profile)
+  },
+
+  applyProfile(profile) {
+    if (this.profileDirty) return
+
     this.setData({
       avatar: profile.avatar === this.data.defaultAvatar ? '' : profile.avatar,
       nickname: profile.nickname
     })
   },
 
-  chooseAvatar() {
-    const updateAvatar = (path) => {
-      if (!path) return
-      this.setData({ avatar: path })
-    }
-
-    if (wx.chooseMedia) {
-      wx.chooseMedia({
-        count: 1,
-        mediaType: ['image'],
-        sourceType: ['album', 'camera'],
-        success: (res) => {
-          const file = res.tempFiles && res.tempFiles[0]
-          updateAvatar(file && file.tempFilePath)
-        }
-      })
-      return
-    }
-
-    wx.chooseImage({
-      count: 1,
-      sourceType: ['album', 'camera'],
-      success: (res) => {
-        updateAvatar(res.tempFilePaths && res.tempFilePaths[0])
-      }
-    })
+  chooseAvatar(event) {
+    const avatarUrl = event.detail && event.detail.avatarUrl
+    if (!avatarUrl) return
+    this.profileDirty = true
+    this.setData({ avatar: avatarUrl })
   },
 
   updateNickname(event) {
+    this.profileDirty = true
     this.setData({
       nickname: event.detail.value
     })
   },
 
-  saveProfile() {
+  async saveProfile() {
     if (this.data.saving) return
 
     const nickname = this.data.nickname.trim()
@@ -65,10 +72,26 @@ Page({
 
     this.setData({ saving: true })
 
-    saveProfile({
-      nickname,
-      avatar: this.data.avatar || this.data.defaultAvatar
-    })
+    try {
+      let avatar = this.data.avatar || this.data.defaultAvatar
+      if (avatar && avatar !== this.data.defaultAvatar && !isRemoteAvatar(avatar)) {
+        avatar = await uploadAvatar(avatar)
+      }
+
+      await updateRemoteProfile({
+        nickname,
+        avatarUrl: avatar === this.data.defaultAvatar ? '' : avatar
+      })
+      this.profileDirty = false
+    } catch (error) {
+      console.error('save profile failed', error)
+      this.setData({ saving: false })
+      wx.showToast({
+        title: '保存失败，请重试',
+        icon: 'none'
+      })
+      return
+    }
 
     wx.showToast({
       title: '保存成功',

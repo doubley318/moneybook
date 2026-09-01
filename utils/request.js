@@ -46,7 +46,19 @@ function request(method, path, data) {
   })
 }
 
+function buildUrl(path) {
+  if (!path) return ''
+  if (/^https?:\/\//.test(path)) return path
+  if (path[0] !== '/') return `${BASE_URL}/${path}`
+  if (path.indexOf('/moneybook/api/v1') === 0) {
+    return BASE_URL.replace('/moneybook/api/v1', '') + path
+  }
+  return BASE_URL + path
+}
+
 module.exports = {
+  BASE_URL,
+  buildUrl,
   get: (path, params) => request('GET', path, params),
   post: (path, data) => request('POST', path, data),
   patch: (path, data) => request('PATCH', path, data),

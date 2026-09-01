@@ -1,4 +1,4 @@
-const { getProfile } = require('../../data/profile')
+const { fetchProfile, getProfile } = require('../../data/profile')
 const { track } = require('../../utils/analytics')
 
 Page({
@@ -24,6 +24,11 @@ Page({
   onShow() {
     track('mine_page_view')
     this.refreshProfile()
+    fetchProfile()
+      .then(() => this.refreshProfile())
+      .catch((error) => {
+        console.error('fetch profile failed', error)
+      })
   },
 
   refreshProfile() {

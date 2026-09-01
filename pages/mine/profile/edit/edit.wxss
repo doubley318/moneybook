@@ -17,6 +17,16 @@ page {
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  line-height: normal;
+}
+
+.avatar-section::after {
+  border: 0;
 }
 
 .avatar-wrap {
