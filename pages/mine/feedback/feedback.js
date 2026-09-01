@@ -1,4 +1,5 @@
 const { post } = require('../../../utils/request')
+const { track } = require('../../../utils/analytics')
 
 Page({
   data: {
@@ -14,6 +15,10 @@ Page({
     content: '',
     contentCount: 0,
     showRequiredDialog: false
+  },
+
+  onShow() {
+    track('feedback_page_view')
   },
 
   copyEmail() {

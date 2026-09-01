@@ -121,11 +121,10 @@ page {
 }
 
 .suggestion-meta {
-  width: 236rpx;
+  width: 104rpx;
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-  gap: 34rpx;
+  justify-content: flex-end;
   flex: none;
   color: #8a8a8a;
   font-size: 22rpx;
@@ -133,12 +132,6 @@ page {
 }
 
 .suggestion-count {
-  width: 98rpx;
-  flex: none;
-  text-align: left;
-}
-
-.suggestion-amount {
   width: 104rpx;
   flex: none;
   text-align: right;

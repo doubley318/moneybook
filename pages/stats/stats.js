@@ -1,4 +1,5 @@
 const { records, fetchRecords, loadCachedRecords } = require('../../data/records')
+const { track } = require('../../utils/analytics')
 
 const categories = [
   { key: 'cash', name: '礼金', receiveLabel: '收到礼金', sendLabel: '送出礼金', balanceLabel: '结余', unit: 'money' },
@@ -236,14 +237,26 @@ Page({
   },
 
   async onShow() {
+    track('stats_page_view')
+
     this.setData({ stats: buildStats(this.data.activeCategory, this.data.selectedYear) })
     await fetchRecords()
     this.setData({ stats: buildStats(this.data.activeCategory, this.data.selectedYear) })
   },
 
   toggleChartFilter() {
+    const willOpen = !this.data.chartFilterOpen
+    if (willOpen) {
+      track('stats_year_filter_click', {
+        record_type: this.data.activeCategory
+      })
+      track('stats_year_filter_dialog_view', {
+        record_type: this.data.activeCategory
+      })
+    }
+
     this.setData({
-      chartFilterOpen: !this.data.chartFilterOpen
+      chartFilterOpen: willOpen
     })
   },
 
@@ -256,6 +269,10 @@ Page({
 
   selectChartFilter(event) {
     const value = event.currentTarget.dataset.value
+    track('stats_year_filter_option_click', {
+      record_type: this.data.activeCategory,
+      year: value
+    })
 
     this.setData({
       selectedYear: value,
@@ -267,6 +284,9 @@ Page({
   goStatsRecords(event) {
     const period = event.currentTarget.dataset.period
     if (!period) return
+    track('stats_records_click', {
+      record_type: this.data.activeCategory
+    })
 
     wx.navigateTo({
       url: `/pages/stats/records/records?type=${this.data.activeCategory}&period=${period}`
@@ -276,6 +296,10 @@ Page({
   switchCategory(event) {
     const key = event.currentTarget.dataset.key
     if (!key || key === this.data.activeCategory) return
+    track('stats_type_switch_click', {
+      record_type: key
+    })
+
     wx.redirectTo({
       url: `/pages/stats/stats?type=${key}`
     })

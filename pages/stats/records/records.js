@@ -1,4 +1,5 @@
 const { records, getYearGroups, fetchRecords, loadCachedRecords } = require('../../../data/records')
+const { track } = require('../../../utils/analytics')
 
 const categories = {
   cash: '礼金',
@@ -39,6 +40,9 @@ Page({
     const period = options.period || ''
     this._filterType = type
     this._filterPeriod = period
+    track('stats_records_page_view', {
+      record_type: type
+    })
     this.setData({ title: `${normalizePeriodLabel(period)}${categories[type]}记录` })
 
     loadCachedRecords()
@@ -68,7 +72,7 @@ Page({
   goRecordDetail(event) {
     const id = event.detail.id
     wx.navigateTo({
-      url: `/pages/records/detail/detail?id=${id}`
+      url: `/pages/records/detail/detail?id=${id}&from=stats_records`
     })
   }
 })

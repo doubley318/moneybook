@@ -1,9 +1,10 @@
 const { getProfile } = require('../../data/profile')
+const { track } = require('../../utils/analytics')
 
 Page({
   data: {
     user: {
-      name: '用户名',
+      name: '微信用户',
       id: '1234567',
       avatar: '/assets/icons/default-avatar.svg'
     },
@@ -21,6 +22,7 @@ Page({
   },
 
   onShow() {
+    track('mine_page_view')
     this.refreshProfile()
   },
 
@@ -36,6 +38,8 @@ Page({
   },
 
   editProfile() {
+    track('profile_entry_click')
+
     wx.navigateTo({
       url: '/pages/mine/profile/edit/edit'
     })
@@ -44,6 +48,10 @@ Page({
   handleMenuTap(event) {
     const key = event.currentTarget.dataset.key
     const label = event.currentTarget.dataset.label
+
+    track('mine_menu_click', {
+      menu_key: key
+    })
 
     if (key === 'about') {
       wx.navigateTo({

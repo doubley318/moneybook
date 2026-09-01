@@ -1,10 +1,9 @@
 const PROFILE_STORAGE_KEY = 'moneybook_profile'
 
 const defaultProfile = {
-  nickname: '用户名',
+  nickname: '微信用户',
   id: '1234567',
-  avatar: '/assets/icons/default-avatar.svg',
-  phone: '12345678910'
+  avatar: '/assets/icons/default-avatar.svg'
 }
 
 function getStoredProfile() {
@@ -19,10 +18,12 @@ function getStoredProfile() {
 }
 
 function getProfile() {
-  return {
+  const profile = {
     ...defaultProfile,
     ...getStoredProfile()
   }
+  if (profile.nickname === '我微信用户') profile.nickname = defaultProfile.nickname
+  return profile
 }
 
 function saveProfile(profile) {
@@ -30,6 +31,7 @@ function saveProfile(profile) {
     ...getProfile(),
     ...profile
   }
+  delete nextProfile.phone
 
   if (typeof wx !== 'undefined' && wx.setStorageSync) {
     wx.setStorageSync(PROFILE_STORAGE_KEY, nextProfile)

@@ -4,6 +4,7 @@ const {
   restoreRecordsFromTrash,
   deleteTrashRecords
 } = require('../../../data/records')
+const { track } = require('../../../utils/analytics')
 
 Page({
   data: {
@@ -15,6 +16,7 @@ Page({
   },
 
   async onShow() {
+    track('trash_page_view')
     await this.refreshTrashRecords()
   },
 
@@ -36,6 +38,10 @@ Page({
 
   toggleManage() {
     const managing = !this.data.managing
+    if (managing) {
+      track('trash_manage_click')
+    }
+
     this.setData({
       managing,
       selectedIds: managing ? this.data.selectedIds : [],
@@ -61,13 +67,21 @@ Page({
   },
 
   async restoreSelected() {
+    track('trash_restore_click')
+
     if (!this.data.selectedIds.length) {
       wx.showToast({ title: '请选择记录', icon: 'none' })
       return
     }
 
+    const recordCount = this.data.selectedIds.length
+
     try {
       await restoreRecordsFromTrash(this.data.selectedIds)
+      track('trash_restore_success', {
+        record_count: recordCount
+      })
+
       wx.showToast({ title: '已恢复', icon: 'none' })
       this.setData({ managing: false, selectedIds: [], allSelected: false }, () => {
         this.refreshTrashRecords()
@@ -78,13 +92,21 @@ Page({
   },
 
   async deleteSelected() {
+    track('trash_delete_click')
+
     if (!this.data.selectedIds.length) {
       wx.showToast({ title: '请选择记录', icon: 'none' })
       return
     }
 
+    const recordCount = this.data.selectedIds.length
+
     try {
       await deleteTrashRecords(this.data.selectedIds)
+      track('trash_delete_success', {
+        record_count: recordCount
+      })
+
       wx.showToast({ title: '已删除', icon: 'none' })
       this.setData({ managing: false, selectedIds: [], allSelected: false }, () => {
         this.refreshTrashRecords()

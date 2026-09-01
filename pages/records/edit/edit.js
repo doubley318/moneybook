@@ -7,13 +7,15 @@ const {
   fetchRecords,
   refreshRecordDisplayNames
 } = require('../../../data/records')
-const { getContactRecordById } = require('../../../data/contacts')
+const { getContactRecordById, getContacts } = require('../../../data/contacts')
+const { track } = require('../../../utils/analytics')
 
 const weekLabels = ['日', '一', '二', '三', '四', '五', '六']
 const yearOptions = Array.from({ length: 21 }, (_, index) => new Date().getFullYear() - 10 + index)
 const monthOptions = Array.from({ length: 12 }, (_, index) => index + 1)
 const sceneOptions = ['结婚', '乔迁', '生日', '生娃', '节日']
 const numericFields = ['amount', 'estimatedValue', 'cost']
+const remarkMaxLength = 200
 
 function pad(value) {
   return `${value}`.padStart(2, '0')
@@ -80,8 +82,8 @@ function buildValue(typeKey, giftType, form) {
 }
 
 function getEmptyValueToast(typeKey) {
-  if (typeKey === 'gift') return '请选择礼物'
-  if (typeKey === 'meal') return '请选择请客'
+  if (typeKey === 'gift') return '请输入礼物'
+  if (typeKey === 'meal') return '请输入请客'
   return '请输入金额'
 }
 
@@ -105,6 +107,19 @@ function normalizeAmountInput(value) {
   }
 
   return `${parts[0]}.${parts.slice(1).join('')}`
+}
+
+function buildNameSuggestions(keyword) {
+  const value = `${keyword || ''}`.trim()
+  if (!value) return []
+
+  return getContacts()
+    .filter((contact) => contact.name.includes(value))
+    .sort((left, right) => left.name.localeCompare(right.name, 'zh-Hans-CN'))
+}
+
+function getNameSuggestionHeight(suggestions) {
+  return Math.min(suggestions.length, 5) * 72
 }
 
 function buildCalendar(year, month, selectedDate) {
@@ -205,11 +220,14 @@ Page({
     calendarYear: new Date().getFullYear(),
     calendarMonth: new Date().getMonth(),
     selectedDate: new Date(),
-    calendarDays: buildCalendar(new Date().getFullYear(), new Date().getMonth(), new Date())
+    calendarDays: buildCalendar(new Date().getFullYear(), new Date().getMonth(), new Date()),
+    nameSuggestions: [],
+    nameSuggestionHeight: 0
   },
 
   async onLoad(options) {
     this.recordId = options.id
+    this.from = options.from || ''
     loadCachedRecords()
     if (!records.length) await fetchRecords()
     refreshRecordDisplayNames()
@@ -239,6 +257,28 @@ Page({
       calendarMonth: selectedDate.getMonth(),
       selectedDate,
       calendarDays: buildCalendar(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate)
+    }, () => {
+      if (this.pendingEditPageViewTrack) {
+        this.pendingEditPageViewTrack = false
+        this.trackEditPageView()
+      }
+    })
+  },
+
+  onShow() {
+    if (!this.data.record) {
+      this.pendingEditPageViewTrack = true
+      return
+    }
+    this.trackEditPageView()
+  },
+
+  trackEditPageView() {
+    if (!this.data.record) return
+    track('record_edit_page_view', {
+      record_id: this.data.record.id,
+      record_type: this.data.record.typeKey,
+      from: this.from || ''
     })
   },
 
@@ -258,7 +298,15 @@ Page({
 
   updateField(event) {
     const field = event.currentTarget.dataset.field
-    const value = numericFields.includes(field) ? normalizeAmountInput(event.detail.value) : event.detail.value
+    let value = numericFields.includes(field) ? normalizeAmountInput(event.detail.value) : event.detail.value
+    if (field === 'remark' && `${value || ''}`.length > remarkMaxLength) {
+      wx.showToast({
+        title: '请将内容控制在200字以内哦~',
+        icon: 'none'
+      })
+      value = `${value || ''}`.slice(0, remarkMaxLength)
+    }
+
     const nextData = {
       [`form.${field}`]: value
     }
@@ -267,8 +315,28 @@ Page({
       nextData.selectedSceneTag = value === this.data.selectedSceneTag ? this.data.selectedSceneTag : ''
     }
 
+    if (field === 'name') {
+      const suggestions = buildNameSuggestions(value)
+      nextData.nameSuggestions = suggestions
+      nextData.nameSuggestionHeight = getNameSuggestionHeight(suggestions)
+    } else {
+      nextData.nameSuggestions = []
+      nextData.nameSuggestionHeight = 0
+    }
+
     this.setData(nextData)
     return value
+  },
+
+  chooseNameSuggestion(event) {
+    const name = event.currentTarget.dataset.name
+    if (!name) return
+
+    this.setData({
+      'form.name': name,
+      nameSuggestions: [],
+      nameSuggestionHeight: 0
+    })
   },
 
   goBack() {
@@ -436,6 +504,10 @@ Page({
 
   async saveRecord() {
     if (this.data.saving || !this.data.record) return
+    track('record_edit_save_click', {
+      record_id: this.data.record.id,
+      record_type: this.data.record.typeKey
+    })
 
     const scene = this.data.selectedSceneTag || this.data.form.scene.trim()
     const typeConfig = recordTypes[this.data.activeType] || recordTypes.cash
@@ -460,10 +532,18 @@ Page({
       return
     }
 
+    if (`${this.data.form.remark || ''}`.length > remarkMaxLength) {
+      wx.showToast({
+        title: '请将内容控制在200字以内哦~',
+        icon: 'none'
+      })
+      return
+    }
+
     this.setData({ saving: true })
 
     try {
-      await updateRecord(this.data.record.id, {
+      const savedRecord = await updateRecord(this.data.record.id, {
         type: typeConfig.type,
         typeKey: this.data.activeType,
         name: this.data.form.name.trim(),
@@ -479,6 +559,11 @@ Page({
         cost: this.data.form.cost.trim(),
         remark: this.data.form.remark.trim(),
         images: this.data.images
+      })
+
+      track('record_edit_success', {
+        record_id: savedRecord.id,
+        record_type: savedRecord.typeKey
       })
     } catch (error) {
       console.error('update record failed', error)

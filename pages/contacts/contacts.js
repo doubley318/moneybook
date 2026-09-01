@@ -1,8 +1,10 @@
 const { getContactGroups, getContacts } = require('../../data/contacts')
 const { fetchRecords, loadCachedRecords } = require('../../data/records')
+const { track } = require('../../utils/analytics')
 
 const groupOrder = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ#'.split('')
 const fallbackGroupLetter = '#'
+const searchTrackDelay = 500
 
 function compareGroupLetter(left, right) {
   const fallbackIndex = groupOrder.indexOf(fallbackGroupLetter)
@@ -34,6 +36,8 @@ Page({
   },
 
   async onShow() {
+    track('contacts_page_view')
+
     this.refreshContacts()
     await fetchRecords()
     this.refreshContacts()
@@ -56,34 +60,55 @@ Page({
     return sourceContacts
       .filter((contact) => (
         contact.name.includes(value) ||
-        `${contact.count}`.includes(value) ||
-        `${contact.amount}`.includes(value)
+        `${contact.count}`.includes(value)
       ))
       .slice(0, 6)
   },
 
   updateKeyword(event) {
     const keyword = event.detail.value.trim()
+    const suggestions = this.buildSuggestions(keyword)
 
     this.setData({
       keyword,
-      suggestions: this.buildSuggestions(keyword)
+      suggestions
     })
+
+    if (this.searchTrackTimer) clearTimeout(this.searchTrackTimer)
+    if (!keyword) return
+
+    this.searchTrackTimer = setTimeout(() => {
+      track('contacts_search', {
+        has_result: suggestions.length > 0
+      })
+    }, searchTrackDelay)
   },
 
   chooseSuggestion(event) {
-    this.goContactDetail(event)
+    const id = event.currentTarget.dataset.id
+    if (!id) return
+    this.navigateContactDetail(id)
   },
 
   goContactDetail(event) {
     const id = event.currentTarget.dataset.id
     if (!id) return
+    track('contact_detail_click')
+
+    this.navigateContactDetail(id)
+  },
+
+  navigateContactDetail(id) {
+    if (!id) return
+
     wx.navigateTo({
       url: `/pages/contacts/detail/detail?id=${id}`
     })
   },
 
   clearKeyword() {
+    if (this.searchTrackTimer) clearTimeout(this.searchTrackTimer)
+
     this.setData({
       keyword: '',
       suggestions: []

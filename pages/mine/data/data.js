@@ -1,4 +1,5 @@
 const { records, fetchRecords, loadCachedRecords, moveRecordsToTrash } = require('../../../data/records')
+const { track } = require('../../../utils/analytics')
 
 Page({
   data: {
@@ -22,6 +23,8 @@ Page({
     const label = event.currentTarget.dataset.label
 
     if (key === 'trash') {
+      track('trash_entry_click')
+
       wx.navigateTo({
         url: '/pages/mine/data/trash'
       })
@@ -34,6 +37,7 @@ Page({
     }
 
     if (key === 'export') {
+      track('data_export_click')
       this.openExportDialog()
     }
   },
@@ -66,6 +70,10 @@ Page({
   noop() {},
 
   downloadLocal() {
+    track('data_export_action_click', {
+      action_type: 'download_local'
+    })
+
     this.closeExportDialog()
     wx.showToast({
       title: '本地下载待接入',
@@ -74,6 +82,10 @@ Page({
   },
 
   sendToFriend() {
+    track('data_export_action_click', {
+      action_type: 'share_friend'
+    })
+
     this.closeExportDialog()
     wx.showToast({
       title: '发送给好友待接入',

@@ -1,4 +1,5 @@
 const { records, getYearGroups, fetchRecords, loadCachedRecords } = require('../../data/records')
+const { track } = require('../../utils/analytics')
 
 const typeOptions = [
   { label: '全部', value: 'all' },
@@ -44,6 +45,8 @@ Page({
   },
 
   async onShow() {
+    track('records_page_view')
+
     this.refreshRecords()
     await fetchRecords()
     this.refreshRecords()
@@ -120,7 +123,7 @@ Page({
   goRecordDetail(event) {
     const id = event.detail.id
     wx.navigateTo({
-      url: `/pages/records/detail/detail?id=${id}`
+      url: `/pages/records/detail/detail?id=${id}&from=records`
     })
   }
 })

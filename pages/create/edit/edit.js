@@ -1,4 +1,6 @@
-const { addRecord, recordTypes } = require('../../../data/records')
+const { getContacts } = require('../../../data/contacts')
+const { addRecord, loadCachedRecords, recordTypes } = require('../../../data/records')
+const { track } = require('../../../utils/analytics')
 
 const weekLabels = ['日', '一', '二', '三', '四', '五', '六']
 // yearOptions: 当前年份前后各10年，共21个选项
@@ -7,9 +9,11 @@ const monthOptions = Array.from({ length: 12 }, (_, index) => index + 1)
 
 // 需要做数字格式过滤的表单字段
 const numericFields = ['amount', 'estimatedValue', 'cost']
+const remarkMaxLength = 200
 
 // 事由快捷标签选项
 const sceneOptions = ['结婚', '乔迁', '生日', '生娃', '节日']
+const CREATE_START_TIME_STORAGE_KEY = 'record_create_start_time'
 
 // 表单各字段的初始值
 const defaultForm = {
@@ -114,8 +118,8 @@ function buildValue(typeKey, giftType, form) {
 }
 
 function getEmptyValueToast(typeKey) {
-  if (typeKey === 'gift') return '请选择礼物'
-  if (typeKey === 'meal') return '请选择请客'
+  if (typeKey === 'gift') return '请输入礼物'
+  if (typeKey === 'meal') return '请输入请客'
   return '请输入金额'
 }
 
@@ -140,6 +144,43 @@ function getSaveErrorMessage(error) {
   if (error.statusCode >= 500) return '服务器开小差了'
   if (error.message && !/^request:/.test(error.message)) return error.message
   return '保存失败，请重试'
+}
+
+function getSaveFailReason(error) {
+  if (!error) return 'unknown'
+  if (error.statusCode === 0) return 'network_error'
+  if (error.statusCode === 401 || error.statusCode === 403) return 'unauthorized'
+  if (error.statusCode >= 500) return 'server_error'
+  if (error.statusCode >= 400) return 'request_error'
+  return 'unknown'
+}
+
+function getStoredCreateStartTime() {
+  try {
+    const createStartTime = Number(wx.getStorageSync(CREATE_START_TIME_STORAGE_KEY))
+    return Number.isFinite(createStartTime) && createStartTime > 0 ? createStartTime : 0
+  } catch (error) {
+    return 0
+  }
+}
+
+function clearStoredCreateStartTime() {
+  try {
+    wx.removeStorageSync(CREATE_START_TIME_STORAGE_KEY)
+  } catch (error) {}
+}
+
+function buildNameSuggestions(keyword) {
+  const value = `${keyword || ''}`.trim()
+  if (!value) return []
+
+  return getContacts()
+    .filter((contact) => contact.name.includes(value))
+    .sort((left, right) => left.name.localeCompare(right.name, 'zh-Hans-CN'))
+}
+
+function getNameSuggestionHeight(suggestions) {
+  return Math.min(suggestions.length, 5) * 72
 }
 
 // 生成指定年月的日历格网数据（共 42 格，6行×7列），每格包含日期、是否当月、是否选中、是否今天等标志
@@ -213,11 +254,15 @@ Page({
     calendarMonth: new Date().getMonth(),
     selectedDate: new Date(),
     calendarDays: buildCalendar(new Date().getFullYear(), new Date().getMonth(), new Date()),
-    from: ''
+    from: '',
+    nameSuggestions: [],
+    nameSuggestionHeight: 0
   },
 
   // 页面加载时，若 URL 参数指定了记录类型则切换到对应 tab
   onLoad(options) {
+    loadCachedRecords()
+    this.createStartTime = getStoredCreateStartTime() || Date.now()
     const nextData = {}
 
     if (options.type === 'gift' || options.type === 'meal' || options.type === 'cash') {
@@ -235,6 +280,13 @@ Page({
     if (Object.keys(nextData).length) {
       this.setData(nextData)
     }
+  },
+
+  onShow() {
+    track('record_create_form_view', {
+      record_type: this.data.activeType,
+      from: this.data.from || ''
+    })
   },
 
   // 切换顶部 tab（礼金/礼物/请客）
@@ -263,7 +315,15 @@ Page({
   // 通用表单字段更新；金额类字段额外做格式过滤；scene 字段变化时同步清除快捷标签高亮
   updateField(event) {
     const field = event.currentTarget.dataset.field
-    const value = numericFields.includes(field) ? normalizeAmountInput(event.detail.value) : event.detail.value
+    let value = numericFields.includes(field) ? normalizeAmountInput(event.detail.value) : event.detail.value
+    if (field === 'remark' && `${value || ''}`.length > remarkMaxLength) {
+      wx.showToast({
+        title: '请将内容控制在200字以内哦~',
+        icon: 'none'
+      })
+      value = `${value || ''}`.slice(0, remarkMaxLength)
+    }
+
     const nextData = {
       [`form.${field}`]: value
     }
@@ -272,8 +332,28 @@ Page({
       nextData.selectedSceneTag = value === this.data.selectedSceneTag ? this.data.selectedSceneTag : ''
     }
 
+    if (field === 'name') {
+      const suggestions = buildNameSuggestions(value)
+      nextData.nameSuggestions = suggestions
+      nextData.nameSuggestionHeight = getNameSuggestionHeight(suggestions)
+    } else {
+      nextData.nameSuggestions = []
+      nextData.nameSuggestionHeight = 0
+    }
+
     this.setData(nextData)
     return value
+  },
+
+  chooseNameSuggestion(event) {
+    const name = event.currentTarget.dataset.name
+    if (!name) return
+
+    this.setData({
+      'form.name': name,
+      nameSuggestions: [],
+      nameSuggestionHeight: 0
+    })
   },
 
   // 返回上一页，若无历史栈则跳转到创建首页
@@ -497,10 +577,18 @@ Page({
       return
     }
 
+    if (`${this.data.form.remark || ''}`.length > remarkMaxLength) {
+      wx.showToast({
+        title: '请将内容控制在200字以内哦~',
+        icon: 'none'
+      })
+      return
+    }
+
     this.setData({ saving: true })
 
     try {
-      await addRecord({
+      const savedRecord = await addRecord({
         id: buildRecordId(selectedDate, this.data.form.name, this.data.activeType),
         type: typeConfig.type,
         typeKey: this.data.activeType,
@@ -518,8 +606,24 @@ Page({
         remark: this.data.form.remark.trim(),
         images: this.data.images
       })
+
+      track('record_create_success', {
+        record_id: savedRecord.id,
+        record_type: savedRecord.typeKey,
+        value_class: savedRecord.valueClass,
+        record_scene: savedRecord.scene,
+        has_images: Array.isArray(savedRecord.images) && savedRecord.images.length > 0,
+        from: this.data.from || '',
+        create_duration_ms: Date.now() - this.createStartTime
+      })
+      clearStoredCreateStartTime()
     } catch (error) {
       console.error('save record failed', error)
+      track('record_create_fail', {
+        record_type: this.data.activeType,
+        fail_reason: getSaveFailReason(error),
+        from: this.data.from || ''
+      })
       this.setData({ saving: false })
       wx.showToast({
         title: getSaveErrorMessage(error),

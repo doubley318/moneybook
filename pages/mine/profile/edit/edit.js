@@ -4,8 +4,7 @@ Page({
   data: {
     avatar: '',
     defaultAvatar: '/assets/icons/default-avatar.svg',
-    nickname: 'XXX',
-    phone: '12345678910',
+    nickname: '微信用户',
     saving: false
   },
 
@@ -13,8 +12,7 @@ Page({
     const profile = getProfile()
     this.setData({
       avatar: profile.avatar === this.data.defaultAvatar ? '' : profile.avatar,
-      nickname: profile.nickname,
-      phone: profile.phone
+      nickname: profile.nickname
     })
   },
 
@@ -52,13 +50,6 @@ Page({
     })
   },
 
-  unbindPhone() {
-    wx.showToast({
-      title: '解绑手机号待接入',
-      icon: 'none'
-    })
-  },
-
   saveProfile() {
     if (this.data.saving) return
 
@@ -76,8 +67,7 @@ Page({
 
     saveProfile({
       nickname,
-      avatar: this.data.avatar || this.data.defaultAvatar,
-      phone: this.data.phone
+      avatar: this.data.avatar || this.data.defaultAvatar
     })
 
     wx.showToast({

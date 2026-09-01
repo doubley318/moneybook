@@ -1,5 +1,8 @@
 const { getContactDetail } = require('../../../data/contacts')
 const { fetchRecords, loadCachedRecords } = require('../../../data/records')
+const { track } = require('../../../utils/analytics')
+
+const CREATE_START_TIME_STORAGE_KEY = 'record_create_start_time'
 
 function truncateText(value, limit) {
   const text = `${value || ''}`
@@ -26,6 +29,7 @@ Page({
 
   onLoad(options) {
     this.contactId = options.id
+    this.hadContactRecords = false
     loadCachedRecords()
     this.refreshContact()
     // onShow 会接管后续的网络刷新
@@ -34,19 +38,44 @@ Page({
   async onShow() {
     this.refreshContact()
     await fetchRecords()
-    this.refreshContact()
+    const contact = this.refreshContact()
+    if (this.shouldBackAfterEmptyContact(contact)) return
+    track('contact_detail_view')
   },
 
   refreshContact() {
+    const contact = formatContactDetail(getContactDetail(this.contactId))
+    if (contact && (contact.records || []).length > 0) {
+      this.hadContactRecords = true
+    }
+
     this.setData({
-      contact: formatContactDetail(getContactDetail(this.contactId))
+      contact
     })
+
+    return contact
+  },
+
+  shouldBackAfterEmptyContact(contact) {
+    if (!this.hadContactRecords) return false
+    if (contact && (contact.records || []).length > 0) return false
+
+    const pages = getCurrentPages()
+    if (pages.length > 1) {
+      wx.navigateBack()
+      return true
+    }
+
+    wx.redirectTo({
+      url: '/pages/contacts/contacts'
+    })
+    return true
   },
 
   goRecordDetail(event) {
     const id = event.currentTarget.dataset.id
     wx.navigateTo({
-      url: `/pages/records/detail/detail?id=${id}`
+      url: `/pages/records/detail/detail?id=${id}&from=contact_detail`
     })
   },
 
@@ -60,6 +89,10 @@ Page({
 
   addRecord() {
     if (!this.data.contact) return
+
+    try {
+      wx.setStorageSync(CREATE_START_TIME_STORAGE_KEY, Date.now())
+    } catch (error) {}
 
     wx.navigateTo({
       url: `/pages/create/edit/edit?from=contact&name=${encodeURIComponent(this.data.contact.name)}`

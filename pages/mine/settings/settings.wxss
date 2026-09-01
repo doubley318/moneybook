@@ -95,6 +95,23 @@ page {
   box-shadow: 0 18rpx 42rpx rgba(44, 36, 28, 0.2);
 }
 
+.account-confirm-dialog {
+  min-height: 286rpx;
+  display: flex;
+  flex-direction: column;
+}
+
+.account-confirm-dialog .dialog-text {
+  min-height: 80rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.account-confirm-dialog .dialog-actions {
+  margin-top: auto;
+}
+
 .dialog-title {
   padding: 38rpx 42rpx 16rpx;
   color: #111111;
@@ -114,6 +131,10 @@ page {
 .dialog-actions {
   display: flex;
   border-top: 1rpx solid #eadfce;
+}
+
+.dialog-actions.single .dialog-button {
+  border-left: 0;
 }
 
 .dialog-button {
@@ -136,4 +157,12 @@ page {
 
 .dialog-button.confirm {
   color: #c52e2b;
+}
+
+.dialog-button.confirm.disabled {
+  opacity: 0.45;
+}
+
+.success-confirm {
+  color: #1f1b18;
 }

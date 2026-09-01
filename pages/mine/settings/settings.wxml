@@ -22,12 +22,33 @@
   </view>
 
   <view class="dialog-mask" wx:if="{{showCancelAccountDialog}}">
-    <view class="clear-dialog">
+    <view class="clear-dialog account-confirm-dialog">
       <view class="dialog-title">注销账号</view>
-      <view class="dialog-text">注销后所有数据将被永久删除<br />确定要继续吗?</view>
+      <view class="dialog-text">注销后将删除您的全部数据，此操作不可恢复</view>
       <view class="dialog-actions">
         <view class="dialog-button cancel" bindtap="closeCancelAccountDialog">取消</view>
-        <view class="dialog-button confirm" bindtap="confirmCancelAccount">确定</view>
+        <view class="dialog-button confirm" bindtap="openCancelAccountSecondDialog">确定</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="dialog-mask" wx:if="{{showCancelAccountSecondDialog}}">
+    <view class="clear-dialog account-confirm-dialog">
+      <view class="dialog-title">再次确认</view>
+      <view class="dialog-text">注销后小程序内历史数据会被永久删除，确定继续吗？</view>
+      <view class="dialog-actions">
+        <view class="dialog-button cancel" bindtap="closeCancelAccountSecondDialog">取消</view>
+        <view class="dialog-button confirm {{cancelingAccount ? 'disabled' : ''}}" bindtap="confirmCancelAccount">确定</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="dialog-mask" wx:if="{{showCancelAccountSuccessDialog}}">
+    <view class="clear-dialog">
+      <view class="dialog-title">账号已注销</view>
+      <view class="dialog-text">账号已成功注销，所有数据已删除。</view>
+      <view class="dialog-actions single">
+        <view class="dialog-button confirm success-confirm" bindtap="finishCancelAccount">确定</view>
       </view>
     </view>
   </view>

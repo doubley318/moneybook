@@ -23,7 +23,6 @@
             <view class="suggestion-name">{{item.name}}</view>
             <view class="suggestion-meta">
               <text class="suggestion-count">来往{{item.count}}次</text>
-              <text class="suggestion-amount">¥{{item.amount}}</text>
             </view>
           </view>
         </view>

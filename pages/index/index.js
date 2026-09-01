@@ -1,4 +1,5 @@
 const { records, fetchRecords, loadCachedRecords, refreshRecordDisplayNames } = require('../../data/records')
+const { track } = require('../../utils/analytics')
 
 function amountOf(record) {
   const value = Number.parseFloat(record.value)
@@ -72,6 +73,8 @@ Page({
   },
 
   async onShow() {
+    track('home_page_view')
+
     // 立即渲染内存中的缓存数据（避免空白等待）
     refreshRecordDisplayNames()
     this.refreshHome()
@@ -90,6 +93,8 @@ Page({
   },
 
   goAllRecords() {
+    track('home_all_records_click')
+
     wx.navigateTo({
       url: '/pages/records/records'
     })
@@ -98,7 +103,7 @@ Page({
   goRecordDetail(event) {
     const id = event.detail.id
     wx.navigateTo({
-      url: `/pages/records/detail/detail?id=${id}`
+      url: `/pages/records/detail/detail?id=${id}&from=home`
     })
   }
 })

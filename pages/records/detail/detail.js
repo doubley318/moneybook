@@ -1,5 +1,6 @@
 const { records, findRecordById, moveRecordToTrash, fetchRecords, refreshRecordDisplayNames } = require('../../../data/records')
 const { getContactRecordById } = require('../../../data/contacts')
+const { track } = require('../../../utils/analytics')
 
 function getTextVisualLength(text) {
   return `${text || ''}`.split('').reduce((total, char) => {
@@ -23,6 +24,7 @@ Page({
 
   async onLoad(options) {
     this.recordId = options.id
+    this.from = options.from || ''
     if (!records.length) await fetchRecords()
     refreshRecordDisplayNames()
     this.loadRecord()
@@ -32,7 +34,14 @@ Page({
     if (!this.recordId) return
     this.loadRecord()
     await fetchRecords()
-    this.loadRecord()
+    const record = this.loadRecord()
+    if (record) {
+      track('record_detail_view', {
+        record_id: record.id,
+        record_type: record.typeKey,
+        from: this.from || ''
+      })
+    }
   },
 
   loadRecord() {
@@ -41,7 +50,7 @@ Page({
     if (!record) {
       wx.showToast({ title: '记录不存在', icon: 'none' })
       setTimeout(() => wx.navigateBack(), 800)
-      return
+      return null
     }
     const images = Array.isArray(record.images) ? record.images : []
     const value = `${record.value || ''}`.trim()
@@ -72,16 +81,33 @@ Page({
         hasCost: Boolean(cost)
       }
     })
+
+    return record
   },
 
   editRecord() {
     if (!this.data.record) return
+    track('record_edit_click', {
+      record_id: this.data.record.id,
+      record_type: this.data.record.typeKey
+    })
+
     wx.navigateTo({
-      url: `/pages/records/edit/edit?id=${this.data.record.id}`
+      url: `/pages/records/edit/edit?id=${this.data.record.id}&from=record_detail`
     })
   },
 
   openDeleteDialog() {
+    if (!this.data.record) return
+    track('record_delete_click', {
+      record_id: this.data.record.id,
+      record_type: this.data.record.typeKey
+    })
+    track('record_delete_dialog_view', {
+      record_id: this.data.record.id,
+      record_type: this.data.record.typeKey
+    })
+
     this.setData({ showDeleteDialog: true })
   },
 
@@ -91,9 +117,14 @@ Page({
 
   async confirmDelete() {
     if (!this.data.record) return
+    const record = this.data.record
 
     try {
-      await moveRecordToTrash(this.data.record.id)
+      await moveRecordToTrash(record.id)
+      track('record_delete_success', {
+        record_id: record.id,
+        record_type: record.typeKey
+      })
       this.setData({ showDeleteDialog: false })
       wx.showToast({ title: '已删除', icon: 'none' })
       setTimeout(() => wx.navigateBack(), 800)

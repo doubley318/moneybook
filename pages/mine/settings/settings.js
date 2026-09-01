@@ -1,7 +1,15 @@
+const { get, del } = require('../../../utils/request')
+const { ensureToken, clearToken } = require('../../../utils/auth')
+const { records } = require('../../../data/records')
+const { track } = require('../../../utils/analytics')
+
 Page({
   data: {
     showClearCacheDialog: false,
     showCancelAccountDialog: false,
+    showCancelAccountSecondDialog: false,
+    showCancelAccountSuccessDialog: false,
+    cancelingAccount: false,
     sections: [
       {
         title: '缓存管理',
@@ -35,6 +43,7 @@ Page({
     }
 
     if (key === 'cancel-account') {
+      track('account_delete_click')
       this.setData({ showCancelAccountDialog: true })
       return
     }
@@ -76,11 +85,93 @@ Page({
     this.setData({ showCancelAccountDialog: false })
   },
 
-  confirmCancelAccount() {
-    this.setData({ showCancelAccountDialog: false })
-    wx.showToast({
-      title: '注销账号待接入',
-      icon: 'none'
+  openCancelAccountSecondDialog() {
+    track('account_delete_first_confirm_click')
+
+    this.setData({
+      showCancelAccountDialog: false,
+      showCancelAccountSecondDialog: true
+    })
+  },
+
+  closeCancelAccountSecondDialog() {
+    if (this.data.cancelingAccount) return
+    this.setData({ showCancelAccountSecondDialog: false })
+  },
+
+  async confirmCancelAccount() {
+    if (this.data.cancelingAccount) return
+    track('account_delete_second_confirm_click')
+
+    this.setData({
+      cancelingAccount: true,
+      showCancelAccountSecondDialog: false
+    }, () => {
+      wx.showToast({
+        title: '账号正在注销...',
+        icon: 'none',
+        duration: 1200
+      })
+    })
+
+    try {
+      await this.deleteAllRemoteRecords()
+      track('account_delete_success')
+      this.clearAccountLocalData()
+
+      setTimeout(() => {
+        this.setData({
+          cancelingAccount: false,
+          showCancelAccountSuccessDialog: true
+        })
+      }, 1200)
+    } catch (error) {
+      console.error('cancel account failed', error)
+      this.setData({
+        cancelingAccount: false
+      })
+      wx.showToast({
+        title: '注销失败，请重试',
+        icon: 'none'
+      })
+    }
+  },
+
+  async deleteAllRemoteRecords() {
+    const allRecords = await this.requestWithAccountRetry(() => get('/records', { include_deleted: true }))
+    const recordIds = Array.from(new Set((allRecords || []).map((record) => String(record.id)).filter(Boolean)))
+
+    if (!recordIds.length) return
+
+    await Promise.all(recordIds.map((id) => this.requestWithAccountRetry(() => del(`/records/${id}/permanent`))))
+  },
+
+  async requestWithAccountRetry(requester) {
+    await ensureToken()
+
+    try {
+      return await requester()
+    } catch (error) {
+      if (!error || (error.statusCode !== 401 && error.statusCode !== 403)) throw error
+
+      await ensureToken(true)
+      return requester()
+    }
+  },
+
+  clearAccountLocalData() {
+    try {
+      wx.clearStorageSync()
+    } catch (error) {}
+
+    clearToken()
+    records.splice(0, records.length)
+  },
+
+  finishCancelAccount() {
+    this.setData({ showCancelAccountSuccessDialog: false })
+    wx.switchTab({
+      url: '/pages/index/index'
     })
   }
 })
