@@ -18,6 +18,10 @@
 
 核心配置在 `app.json`，项目配置在 `project.config.json`。
 
+`ANALYTICS_TRACKING_MAP.md` 记录当前前端所有埋点位置、触发时机和上报字段。
+
+`BACKEND_ADAPTATION_FROM_LAST_COMMIT.md` 记录最近一次前端提交后，后端需要适配的接口、字段和账号注销/埋点事项，方便交接后端开发。
+
 ## 顶层目录
 
 ```text
@@ -25,6 +29,8 @@
 ├─ app.js
 ├─ app.json
 ├─ app.wxss
+├─ ANALYTICS_TRACKING_MAP.md
+├─ BACKEND_ADAPTATION_FROM_LAST_COMMIT.md
 ├─ project.config.json
 ├─ project.private.config.json
 ├─ sitemap.json

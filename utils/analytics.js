@@ -1,8 +1,7 @@
 const { post } = require('./request')
 const { getProfile } = require('../data/profile')
 
-// 后端统一埋点接口确认后，在这里填入路径，例如：'/analytics/events'
-const ANALYTICS_ENDPOINT = ''
+const ANALYTICS_ENDPOINT = '/analytics/events'
 const DEVICE_ID_STORAGE_KEY = 'analytics_device_id'
 
 function getCurrentPagePath() {
