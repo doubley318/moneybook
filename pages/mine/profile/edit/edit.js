@@ -6,7 +6,11 @@ const {
 } = require('../../../../data/profile')
 
 function isRemoteAvatar(avatar) {
-  return /^https?:\/\//.test(`${avatar || ''}`)
+  const value = `${avatar || ''}`.trim()
+  if (!/^https?:\/\//.test(value)) return false
+
+  // 微信头像选择器可能返回 http://tmp/... 之类的临时路径，不能当成可持久展示的远程地址。
+  return !/^https?:\/\/tmp\//.test(value) && !/^https?:\/\/usr\//.test(value)
 }
 
 Page({
