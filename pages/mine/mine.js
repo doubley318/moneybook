@@ -90,5 +90,12 @@ Page({
       title: `${label}待接入`,
       icon: 'none'
     })
+  },
+
+  onShareAppMessage() {
+    return {
+      title: 'moneyBook - 记录礼金、礼物和请客往来',
+      path: '/pages/index/index'
+    }
   }
 })

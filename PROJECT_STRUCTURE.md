@@ -417,6 +417,7 @@
 - `onShow()` 会先展示本地缓存资料，再从后端刷新账号资料
 - `menuItems` 渲染分享给好友、关于我们、数据管理、意见反馈、系统设置
 - “关于我们”跳转到 `pages/mine/about/about`
+- “分享给好友”使用 `open-type="share"` 拉起微信转发面板
 - “数据管理”跳转到 `pages/mine/data/data`
 - “意见反馈”跳转到 `pages/mine/feedback/feedback`
 - “系统设置”跳转到 `pages/mine/settings/settings`

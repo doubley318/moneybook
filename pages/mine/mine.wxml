@@ -31,6 +31,14 @@
             </view>
           </view>
           <text>{{item.label}}</text>
+          <button
+            wx:if="{{item.key == 'share'}}"
+            class="share-hitarea"
+            data-key="{{item.key}}"
+            data-label="{{item.label}}"
+            open-type="share"
+            bindtap="handleMenuTap"
+          ></button>
         </view>
       </view>
 
