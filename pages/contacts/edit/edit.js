@@ -7,7 +7,8 @@ Page({
     name: '',
     recordIds: [],
     showDeleteDialog: false,
-    deleting: false
+    deleting: false,
+    saving: false
   },
 
   async onLoad(options) {
@@ -37,7 +38,9 @@ Page({
     wx.navigateBack()
   },
 
-  saveContact() {
+  async saveContact() {
+    if (this.data.saving) return
+
     const name = this.data.name.trim()
 
     if (!name) {
@@ -45,10 +48,16 @@ Page({
       return
     }
 
-    // TODO: 后端待实现联系人昵称接口 PATCH /api/v1/contacts/{id}
-    // 目前仅本地存储，重新登录或换设备后会丢失
-    updateContactName(this.data.contactId, name)
-    wx.navigateBack()
+    this.setData({ saving: true })
+
+    try {
+      await updateContactName(this.data.contactId, name)
+      wx.navigateBack()
+    } catch (error) {
+      console.error('save contact failed', error)
+      this.setData({ saving: false })
+      wx.showToast({ title: '保存失败，请重试', icon: 'none' })
+    }
   },
 
   openDeleteDialog() {

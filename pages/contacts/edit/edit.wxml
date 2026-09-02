@@ -16,7 +16,7 @@
   </view>
 
   <view class="action-row">
-    <view class="save-button" bindtap="saveContact">保存</view>
+    <view class="save-button {{saving ? 'disabled' : ''}}" bindtap="saveContact">保存</view>
     <view class="delete-contact-button {{deleting ? 'disabled' : ''}}" bindtap="openDeleteDialog">删除联系人</view>
   </view>
 

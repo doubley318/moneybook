@@ -138,6 +138,7 @@ page {
   box-sizing: border-box;
 }
 
+.save-button.disabled,
 .delete-contact-button.disabled,
 .dialog-button.disabled {
   opacity: 0.55;

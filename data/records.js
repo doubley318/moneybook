@@ -35,6 +35,10 @@ function contactIdFromName(name) {
   return encodeURIComponent(normalized || 'unknown')
 }
 
+function contactIdFromRecord(record) {
+  return record && record.contactId ? String(record.contactId) : contactIdFromName(record && (record.rawName || record.name))
+}
+
 function readContactRecordNameMap() {
   if (typeof wx === 'undefined' || !wx.getStorageSync) return {}
 
@@ -130,6 +134,7 @@ function saveRecordOverride(id, record) {
   const overrides = readRecordOverrides()
   overrides[recordId] = {
     rawName: record.name,
+    contactId: record.contactId || '',
     name: record.name,
     typeKey: record.typeKey,
     valueClass: record.valueClass,
@@ -187,19 +192,17 @@ function formatFullDate(fullDate) {
 
 function applyContactDisplayName(record, recordNameMap = readContactRecordNameMap(), ignoredContactIds = []) {
   const rawName = `${record.rawName || record.name || ''}`.trim()
-  const contactId = contactIdFromName(rawName)
+  const contactId = contactIdFromRecord(record)
   const recordRename = recordNameMap[contactId]
-  const renamedRecordIds = Array.isArray(recordRename && recordRename.recordIds)
-    ? recordRename.recordIds.map((id) => String(id))
-    : []
   const displayName = ignoredContactIds.includes(contactId)
     ? rawName
-    : renamedRecordIds.includes(String(record.id))
+    : recordRename && recordRename.name
     ? recordRename.name
     : (record.name || rawName)
 
   return {
     ...record,
+    contactId,
     rawName,
     name: displayName,
     date: record.fullDate ? formatMonthDay(...`${record.fullDate}`.split('-').slice(1)) : record.date,
@@ -213,6 +216,7 @@ function applyRecordOverride(record, recordOverrides = readRecordOverrides()) {
   if (!override) return record
 
   const rawName = override.rawName || override.name || record.rawName
+  const contactId = override.contactId || record.contactId
   const typeKey = override.typeKey || record.typeKey
   const valueClass = override.valueClass || record.valueClass
   const typeConfig = recordTypes[typeKey] || recordTypes[record.typeKey] || {}
@@ -221,6 +225,7 @@ function applyRecordOverride(record, recordOverrides = readRecordOverrides()) {
   return {
     ...record,
     ...override,
+    contactId,
     rawName,
     name: override.name || rawName || record.name,
     typeKey,
@@ -241,10 +246,11 @@ function _normalizeRecord(r) {
   const dir = r.value_class === 'income' ? 'receive' : 'send'
   return applyContactDisplayName(applyRecordOverride({
     id: String(r.id),
+    contactId: r.contact_id ? String(r.contact_id) : '',
     type: typeConfig.type || r.type_key,
     typeKey: r.type_key,
-    rawName: r.name,
-    name: r.name,
+    rawName: r.contact_original_name || r.name,
+    name: r.contact_name || r.name,
     date: formatMonthDay(month, day),
     fullDate: r.full_date,
     dateLabel: formatMonthDay(month, day),
@@ -357,8 +363,8 @@ async function addRecord(record) {
     cost: record.cost || '',
     images: getPersistableImages(record.images)
   })
-  normalized.rawName = record.name
-  normalized.name = record.name
+  normalized.rawName = result.contact_original_name || record.name
+  normalized.name = result.contact_name || record.name
 
   for (let index = records.length - 1; index >= 0; index -= 1) {
     if (String(records[index].id) === recordId) {
@@ -433,7 +439,7 @@ function updateRecordNamesForContact(contactId, name) {
   const updatedRecordIds = []
   records.forEach((record) => {
     const rawName = `${record.rawName || record.name || ''}`.trim()
-    if (contactIdFromName(rawName) !== contactId) return
+    if (contactIdFromRecord(record) !== String(contactId)) return
 
     record.rawName = rawName
     record.name = nextName
@@ -455,23 +461,9 @@ function updateRecordNamesForContact(contactId, name) {
 
 function refreshRecordDisplayNames() {
   const recordNameMap = readContactRecordNameMap()
-  const ignoredContactIds = []
 
   records.forEach((record) => {
-    const rawName = `${record.rawName || record.name || ''}`.trim()
-    const contactId = contactIdFromName(rawName)
-    const recordRename = recordNameMap[contactId]
-    const renamedRecordIds = Array.isArray(recordRename && recordRename.recordIds)
-      ? recordRename.recordIds.map((id) => String(id))
-      : []
-
-    if (!renamedRecordIds.includes(String(record.id)) && (record.name || rawName) === rawName) {
-      ignoredContactIds.push(contactId)
-    }
-  })
-
-  records.forEach((record) => {
-    const nextRecord = applyContactDisplayName(record, recordNameMap, ignoredContactIds)
+    const nextRecord = applyContactDisplayName(record, recordNameMap)
     Object.assign(record, nextRecord)
   })
 
