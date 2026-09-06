@@ -1,20 +1,21 @@
 ﻿<navigation-bar title="个人信息" color="#111111" background="transparent"></navigation-bar>
 
 <view class="profile-edit-page">
-  <view class="avatar-section" bindtap="chooseAvatar" hover-class="tap-active" hover-stay-time="80">
+  <button class="avatar-section" open-type="chooseAvatar" bindchooseavatar="chooseAvatar" hover-class="tap-active" hover-stay-time="80">
     <view class="avatar-wrap">
       <view class="avatar-circle">
         <image class="avatar-image" src="{{avatar || defaultAvatar}}" mode="aspectFit"></image>
       </view>
       <image class="avatar-camera" src="/assets/icons/avatar-camera.svg" mode="aspectFit"></image>
     </view>
-  </view>
+  </button>
 
   <view class="form-section">
     <view class="field-block">
       <view class="field-label">昵称</view>
       <input
         class="nickname-input"
+        type="nickname"
         value="{{nickname}}"
         bindinput="updateNickname"
       />
