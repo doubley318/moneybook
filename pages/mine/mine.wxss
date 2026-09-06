@@ -77,10 +77,29 @@ page {
   min-height: 86rpx;
   display: flex;
   align-items: center;
+  position: relative;
   border-bottom: 1rpx solid #d7cec2;
   color: #1f1b18;
   font-size: 28rpx;
   font-weight: 500;
+}
+
+.share-hitarea {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  opacity: 0;
+}
+
+.share-hitarea::after {
+  border: 0;
 }
 
 .menu-row:last-child {
