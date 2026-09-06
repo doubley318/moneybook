@@ -1,5 +1,6 @@
 const { records, fetchRecords, loadCachedRecords, moveRecordsToTrash } = require('../../../data/records')
 const { track } = require('../../../utils/analytics')
+const { createRecordsCsvFile } = require('../../../utils/export-records')
 
 Page({
   data: {
@@ -7,6 +8,7 @@ Page({
     showExportDialog: false,
     showExportToast: false,
     clearing: false,
+    exporting: false,
     actions: [
       { key: 'export', label: '导出数据' },
       { key: 'clear', label: '清空数据' },
@@ -45,6 +47,7 @@ Page({
   openExportDialog() {
     clearTimeout(this.exportToastTimer)
     clearTimeout(this.exportDialogTimer)
+    this.exportFile = null
     this.setData({
       showExportToast: true,
       showExportDialog: false
@@ -69,28 +72,96 @@ Page({
 
   noop() {},
 
-  downloadLocal() {
+  async getExportFile() {
+    if (this.exportFile) return this.exportFile
+
+    this.setData({ exporting: true })
+    try {
+      this.exportFile = await createRecordsCsvFile()
+      return this.exportFile
+    } finally {
+      this.setData({ exporting: false })
+    }
+  },
+
+  async downloadLocal() {
+    if (this.data.exporting) return
+
     track('data_export_action_click', {
       action_type: 'download_local'
     })
 
-    this.closeExportDialog()
-    wx.showToast({
-      title: '本地下载待接入',
-      icon: 'none'
-    })
+    try {
+      const file = await this.getExportFile()
+      this.closeExportDialog()
+
+      wx.openDocument({
+        filePath: file.filePath,
+        fileType: 'csv',
+        showMenu: true,
+        success: () => {},
+        fail: (error) => {
+          console.error('open export file failed', error)
+          wx.showModal({
+            title: '文件已生成',
+            content: `已生成 ${file.fileName}，可通过“发送给好友”分享文件。`,
+            showCancel: false
+          })
+        }
+      })
+    } catch (error) {
+      console.error('export records failed', error)
+      wx.showToast({
+        title: error && error.message ? error.message : '导出失败，请重试',
+        icon: 'none'
+      })
+    }
   },
 
-  sendToFriend() {
+  async sendToFriend() {
+    if (this.data.exporting) return
+
     track('data_export_action_click', {
       action_type: 'share_friend'
     })
 
-    this.closeExportDialog()
-    wx.showToast({
-      title: '发送给好友待接入',
-      icon: 'none'
-    })
+    if (typeof wx.shareFileMessage !== 'function') {
+      wx.showToast({
+        title: '当前微信版本不支持文件分享',
+        icon: 'none'
+      })
+      return
+    }
+
+    try {
+      const file = await this.getExportFile()
+      this.closeExportDialog()
+      wx.shareFileMessage({
+        filePath: file.filePath,
+        fileName: file.fileName,
+        fail: (error) => {
+          console.error('share export file failed', error)
+          wx.showModal({
+            title: '发送失败',
+            content: '文件已生成，可先打开文件后通过右上角菜单转发。',
+            showCancel: false,
+            success: () => {
+              wx.openDocument({
+                filePath: file.filePath,
+                fileType: 'csv',
+                showMenu: true
+              })
+            }
+          })
+        }
+      })
+    } catch (error) {
+      console.error('export records failed', error)
+      wx.showToast({
+        title: error && error.message ? error.message : '导出失败，请重试',
+        icon: 'none'
+      })
+    }
   },
 
   closeClearDataDialog() {

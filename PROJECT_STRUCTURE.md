@@ -42,6 +42,7 @@
 ├─ utils/
 │  ├─ analytics.js
 │  ├─ auth.js
+│  ├─ export-records.js
 │  ├─ pinyin.js
 │  └─ request.js
 ├─ pages/
@@ -144,6 +145,15 @@
 联系人详情中有 `total` 汇总和 `records` 往来条目。
 
 ## 工具层
+
+### `utils/export-records.js`
+
+负责把当前未删除记录导出为 CSV 文件。
+
+主要导出：
+
+- `buildRecordsCsv(sourceRecords)`：把记录数组转换为带 UTF-8 BOM 的 CSV 字符串
+- `createRecordsCsvFile()`：刷新当前记录后生成 `moneybook-records-YYYY-MM-DD.csv`，写入小程序本地用户目录并返回文件信息
 
 ### `utils/analytics.js`
 
@@ -479,7 +489,9 @@
 
 - `actions` 渲染导出数据和回收站入口
 - 点击“回收站”跳转到 `pages/mine/data/trash`
-- 导出数据仍是占位逻辑
+- 点击“导出数据”会生成当前未删除记录的 CSV 文件
+- “本地下载”会尝试打开生成的 CSV 文件并显示系统菜单
+- “发送给好友”会通过 `wx.shareFileMessage` 分享生成的 CSV 文件
 
 ### `pages/mine/data/trash`
 
