@@ -1,3 +1,5 @@
+const { patch } = require('../utils/request')
+const { ensureToken } = require('../utils/auth')
 const { records, updateRecordNamesForContact } = require('./records')
 const { getNameInitial, fallbackInitial } = require('../utils/pinyin')
 
@@ -7,6 +9,31 @@ const fallbackGroupLetter = fallbackInitial
 function contactIdFromName(name) {
   const normalized = `${name || ''}`.trim()
   return encodeURIComponent(normalized || 'unknown')
+}
+
+function contactIdFromRecord(record) {
+  return record && record.contactId ? String(record.contactId) : contactIdFromName(record && (record.rawName || record.name))
+}
+
+function isBackendContactId(id) {
+  return /^\d+$/.test(`${id || ''}`)
+}
+
+function isUnauthorizedError(error) {
+  return error && (error.statusCode === 401 || error.statusCode === 403)
+}
+
+async function requestWithAuthRetry(requester) {
+  await ensureToken()
+
+  try {
+    return await requester()
+  } catch (error) {
+    if (!isUnauthorizedError(error)) throw error
+
+    await ensureToken(true)
+    return requester()
+  }
 }
 
 function compareGroupLetter(left, right) {
@@ -73,7 +100,7 @@ function buildContacts() {
     const rawName = `${record.rawName || record.name || ''}`.trim()
     if (!rawName) return
 
-    const id = contactIdFromName(rawName)
+    const id = contactIdFromRecord(record)
     const displayName = record.name || rawName
 
     if (!contactMap[id]) {
@@ -158,9 +185,15 @@ function getContactDetail(id) {
   return getContacts().find((contact) => contact.id === id) || null
 }
 
-function updateContactName(id, name) {
+async function updateContactName(id, name) {
   const nextName = `${name || ''}`.trim()
   if (!id || !nextName) return null
+
+  if (isBackendContactId(id)) {
+    await requestWithAuthRetry(() => patch(`/contacts/${id}`, {
+      display_name: nextName
+    }))
+  }
 
   updateRecordNamesForContact(id, nextName)
 
