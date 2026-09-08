@@ -74,8 +74,11 @@ Page({
 
   goRecordDetail(event) {
     const id = event.currentTarget.dataset.id
+    const recordCount = this.data.contact && Array.isArray(this.data.contact.records)
+      ? this.data.contact.records.length
+      : 0
     wx.navigateTo({
-      url: `/pages/records/detail/detail?id=${id}&from=contact_detail`
+      url: `/pages/records/detail/detail?id=${id}&from=contact_detail&contact_record_count=${recordCount}`
     })
   },
 

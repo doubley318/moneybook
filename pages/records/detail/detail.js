@@ -25,6 +25,7 @@ Page({
   async onLoad(options) {
     this.recordId = options.id
     this.from = options.from || ''
+    this.contactRecordCount = Number(options.contact_record_count || 0)
     if (!records.length) await fetchRecords()
     refreshRecordDisplayNames()
     this.loadRecord()
@@ -127,7 +128,14 @@ Page({
       })
       this.setData({ showDeleteDialog: false })
       wx.showToast({ title: '已删除', icon: 'none' })
-      setTimeout(() => wx.navigateBack(), 800)
+      setTimeout(() => {
+        if (this.from === 'contact_detail' && this.contactRecordCount === 1) {
+          wx.navigateBack({ delta: 2 })
+          return
+        }
+
+        wx.navigateBack()
+      }, 800)
     } catch (e) {
       wx.showToast({ title: '删除失败', icon: 'none' })
     }
