@@ -63,4 +63,9 @@
       </view>
     </view>
   </view>
+
+  <view class="account-loading-toast" wx:if="{{showCancelAccountToast}}">
+    <image class="loading-gift-icon" src="/assets/icons/loading-gift.svg" mode="aspectFit"></image>
+    <view>账号正在注销...</view>
+  </view>
 </view>

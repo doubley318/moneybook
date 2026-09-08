@@ -103,21 +103,42 @@ page {
   position: fixed;
   left: 50%;
   top: 50%;
-  width: 232rpx;
-  height: 232rpx;
+  min-width: 232rpx;
+  min-height: 232rpx;
+  padding: 28rpx;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  border-radius: 8rpx;
-  color: #ffffff;
-  background: rgba(53, 53, 53, 0.9);
-  box-shadow: none;
+  gap: 20rpx;
+  color: #8b6840;
+  border-radius: 16rpx;
+  background: rgba(255, 253, 249, 0.96);
+  box-shadow: 0 16rpx 38rpx rgba(85, 67, 48, 0.12);
   font-size: 30rpx;
   font-weight: 500;
   line-height: 40rpx;
   transform: translate(-50%, -50%);
   z-index: 120;
   box-sizing: border-box;
+}
+
+.loading-gift-icon {
+  width: 72rpx;
+  height: 72rpx;
+  display: block;
+  animation: loading-gift-bounce 900ms ease-in-out infinite;
+}
+
+@keyframes loading-gift-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10rpx);
+  }
 }
 
 .dialog-text {
