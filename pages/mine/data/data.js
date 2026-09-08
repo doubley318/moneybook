@@ -1,6 +1,6 @@
 const { records, fetchRecords, loadCachedRecords, moveRecordsToTrash } = require('../../../data/records')
 const { track } = require('../../../utils/analytics')
-const { createRecordsCsvFile } = require('../../../utils/export-records')
+const { createRecordsWorkbookFile } = require('../../../utils/export-records')
 
 Page({
   data: {
@@ -77,7 +77,7 @@ Page({
 
     this.setData({ exporting: true })
     try {
-      this.exportFile = await createRecordsCsvFile()
+      this.exportFile = await createRecordsWorkbookFile()
       return this.exportFile
     } finally {
       this.setData({ exporting: false })
@@ -97,7 +97,7 @@ Page({
 
       wx.openDocument({
         filePath: file.filePath,
-        fileType: 'csv',
+        fileType: 'xlsx',
         showMenu: true,
         success: () => {},
         fail: (error) => {
@@ -148,7 +148,7 @@ Page({
             success: () => {
               wx.openDocument({
                 filePath: file.filePath,
-                fileType: 'csv',
+                fileType: 'xlsx',
                 showMenu: true
               })
             }
