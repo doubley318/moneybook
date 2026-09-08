@@ -1,4 +1,4 @@
-const { get, post, patch, del } = require('../utils/request')
+const { get, post, patch, del, buildUrl } = require('../utils/request')
 const { ensureToken } = require('../utils/auth')
 
 const RECORDS_CACHE_KEY = 'moneybook_records'
@@ -308,13 +308,57 @@ function isUnauthorizedError(error) {
   return error && (error.statusCode === 401 || error.statusCode === 403)
 }
 
+function isPersistableImage(image) {
+  const value = `${image || ''}`
+  return /^https?:\/\//.test(value) || value.indexOf('/moneybook/api/v1/records/images/') === 0
+}
+
 function getPersistableImages(images) {
   if (!Array.isArray(images)) return []
 
-  return images.filter((image) => /^https?:\/\//.test(`${image || ''}`))
+  return images.filter(isPersistableImage).map((image) => {
+    const value = `${image || ''}`
+    return value.indexOf('/moneybook/api/v1/records/images/') === 0 ? buildUrl(value) : value
+  })
 }
 
-function buildRecordPayload(record) {
+function getImageContentType(filePath) {
+  const lowerPath = `${filePath || ''}`.toLowerCase()
+  if (lowerPath.endsWith('.png')) return 'image/png'
+  if (lowerPath.endsWith('.webp')) return 'image/webp'
+  return 'image/jpeg'
+}
+
+async function uploadRecordImage(filePath) {
+  const fileSystem = wx.getFileSystemManager()
+  const data = fileSystem.readFileSync(filePath, 'base64')
+  const result = await requestWithAuthRetry(() => post('/records/images', {
+    filename: filePath.split('/').pop() || 'record.jpg',
+    content_type: getImageContentType(filePath),
+    data
+  }))
+
+  return result && result.image_url ? buildUrl(result.image_url) : ''
+}
+
+async function resolvePersistableImages(images) {
+  if (!Array.isArray(images)) return []
+
+  const resolvedImages = []
+  for (const image of images.slice(0, 9)) {
+    if (isPersistableImage(image)) {
+      resolvedImages.push(buildUrl(`${image || ''}`))
+      continue
+    }
+
+    const imageUrl = await uploadRecordImage(image)
+    if (imageUrl) resolvedImages.push(imageUrl)
+  }
+
+  return resolvedImages
+}
+
+function buildRecordPayload(record, images) {
   return {
     type_key: record.typeKey,
     value_class: record.valueClass,
@@ -325,7 +369,7 @@ function buildRecordPayload(record) {
     remark: record.remark || '',
     estimated_value: record.estimatedValue || '',
     cost: record.cost || '',
-    images: getPersistableImages(record.images)
+    images
   }
 }
 
@@ -343,7 +387,8 @@ async function requestWithAuthRetry(requester) {
 }
 
 async function addRecord(record) {
-  const result = await requestWithAuthRetry(() => post('/records', buildRecordPayload(record)))
+  const images = await resolvePersistableImages(record.images)
+  const result = await requestWithAuthRetry(() => post('/records', buildRecordPayload(record, images)))
   const recordId = String(result.id || record.id || Date.now())
   removePermanentlyDeletedRecordIds([recordId])
   removeRecordOverrides([recordId])
@@ -361,7 +406,7 @@ async function addRecord(record) {
     remark: record.remark || '',
     estimated_value: record.estimatedValue || '',
     cost: record.cost || '',
-    images: getPersistableImages(record.images)
+    images
   })
   normalized.rawName = result.contact_original_name || record.name
   normalized.name = result.contact_name || record.name
@@ -382,7 +427,8 @@ async function updateRecord(id, record) {
   const recordId = String(id || '')
   if (!recordId) throw new Error('记录不存在')
 
-  const result = await requestWithAuthRetry(() => patch(`/records/${recordId}`, buildRecordPayload(record)))
+  const images = await resolvePersistableImages(record.images)
+  const result = await requestWithAuthRetry(() => patch(`/records/${recordId}`, buildRecordPayload(record, images)))
   saveRecordOverride(recordId, record)
   const normalized = _normalizeRecord({
     ...result,
@@ -396,7 +442,7 @@ async function updateRecord(id, record) {
     remark: record.remark || '',
     estimated_value: record.estimatedValue || '',
     cost: record.cost || '',
-    images: getPersistableImages(record.images)
+    images
   })
   const index = records.findIndex((item) => item.id === recordId)
   if (index !== -1) {
