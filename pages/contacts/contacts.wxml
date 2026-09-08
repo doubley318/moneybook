@@ -28,6 +28,8 @@
         </view>
       </view>
 
+      <view class="total-text empty-total" wx:if="{{!total && !keyword}}">共{{total}}位联系人</view>
+
       <view class="contact-list">
         <block wx:for="{{contactGroups}}" wx:key="letter" wx:for-item="group">
           <view class="group-title">{{group.letter}}</view>
@@ -39,9 +41,17 @@
             <view class="row-arrow" aria-role="button" aria-label="查看联系人"></view>
           </view>
         </block>
+
+        <view class="contacts-empty-guide" wx:if="{{!total && !keyword}}">
+          <image class="contacts-empty-icon" src="/assets/icons/empty-record-pencil.svg" mode="aspectFit"></image>
+          <view class="contacts-empty-text">
+            <view>点击「+」建立第一笔往来记录</view>
+            <view>生成联系人</view>
+          </view>
+        </view>
       </view>
 
-      <view class="total-text">共{{total}}位联系人</view>
+      <view class="total-text" wx:if="{{total || keyword}}">共{{total}}位联系人</view>
     </view>
   </scroll-view>
 

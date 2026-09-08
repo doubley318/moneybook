@@ -27,7 +27,10 @@
       </view>
     </view>
 
-    <view wx:if="{{!records.length}}" class="empty-state {{centerEmpty ? 'center-empty' : ''}}">暂无记录</view>
+    <view wx:if="{{!records.length}}" class="empty-state {{centerEmpty ? 'center-empty' : ''}}">
+      <image class="empty-icon" wx:if="{{emptyIcon}}" src="{{emptyIcon}}" mode="aspectFit"></image>
+      <view>{{emptyText}}</view>
+    </view>
   </block>
 
   <block wx:else>
@@ -66,6 +69,9 @@
       </block>
     </block>
 
-    <view wx:if="{{!yearGroups.length}}" class="empty-state {{centerEmpty ? 'center-empty' : ''}}">暂无记录</view>
+    <view wx:if="{{!yearGroups.length}}" class="empty-state {{centerEmpty ? 'center-empty' : ''}}">
+      <image class="empty-icon" wx:if="{{emptyIcon}}" src="{{emptyIcon}}" mode="aspectFit"></image>
+      <view>{{emptyText}}</view>
+    </view>
   </block>
 </view>
