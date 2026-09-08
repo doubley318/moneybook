@@ -30,8 +30,8 @@
       <text>全选</text>
     </view>
     <view class="manage-actions">
-      <view class="manage-action restore" bindtap="restoreSelected">恢复</view>
-      <view class="manage-action delete" bindtap="deleteSelected">删除</view>
+      <view class="manage-action restore {{restoring || deleting ? 'disabled' : ''}}" bindtap="restoreSelected">恢复</view>
+      <view class="manage-action delete {{restoring || deleting ? 'disabled' : ''}}" bindtap="deleteSelected">删除</view>
     </view>
   </view>
 </view>

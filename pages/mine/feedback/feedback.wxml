@@ -40,7 +40,7 @@
     <view class="content-count">{{contentCount}}/500</view>
   </view>
 
-  <view class="submit-button" bindtap="submitFeedback" hover-class="tap-active" hover-stay-time="80">提交反馈</view>
+  <view class="submit-button {{submitting ? 'disabled' : ''}}" bindtap="submitFeedback" hover-class="tap-active" hover-stay-time="80">提交反馈</view>
 
   <view class="dialog-mask" wx:if="{{showRequiredDialog}}" bindtap="closeRequiredDialog">
     <view class="required-dialog" catchtap="noop">

@@ -240,6 +240,7 @@ Page({
       date: formatDate(new Date())
     },
     saving: false,
+    choosingImage: false,
     images: [],
     calendarVisible: false,
     calendarPickerVisible: false,
@@ -510,8 +511,12 @@ Page({
 
   // 选择图片，最多 3 张，兼容新旧 wx API（chooseMedia / chooseImage）
   chooseImage() {
+    if (this.data.choosingImage) return
+
     const remain = 3 - this.data.images.length
     if (remain <= 0) return
+
+    this.setData({ choosingImage: true })
 
     const onSuccess = (paths) => {
       this.setData({
@@ -524,7 +529,8 @@ Page({
         count: remain,
         mediaType: ['image'],
         sourceType: ['album', 'camera'],
-        success: (res) => onSuccess(res.tempFiles.map((item) => item.tempFilePath))
+        success: (res) => onSuccess(res.tempFiles.map((item) => item.tempFilePath)),
+        complete: () => this.setData({ choosingImage: false })
       })
       return
     }
@@ -532,7 +538,8 @@ Page({
     wx.chooseImage({
       count: remain,
       sourceType: ['album', 'camera'],
-      success: (res) => onSuccess(res.tempFilePaths)
+      success: (res) => onSuccess(res.tempFilePaths),
+      complete: () => this.setData({ choosingImage: false })
     })
   },
 

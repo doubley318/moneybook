@@ -9,6 +9,7 @@ Page({
     showExportToast: false,
     clearing: false,
     exporting: false,
+    exportPreparing: false,
     actions: [
       { key: 'export', label: '导出数据' },
       { key: 'clear', label: '清空数据' },
@@ -39,6 +40,7 @@ Page({
     }
 
     if (key === 'export') {
+      if (this.data.exportPreparing || this.data.exporting) return
       track('data_export_click')
       this.openExportDialog()
     }
@@ -49,6 +51,7 @@ Page({
     clearTimeout(this.exportDialogTimer)
     this.exportFile = null
     this.setData({
+      exportPreparing: true,
       showExportToast: true,
       showExportDialog: false
     })
@@ -56,7 +59,10 @@ Page({
     this.exportToastTimer = setTimeout(() => {
       this.setData({ showExportToast: false })
       this.exportDialogTimer = setTimeout(() => {
-        this.setData({ showExportDialog: true })
+        this.setData({
+          showExportDialog: true,
+          exportPreparing: false
+        })
       }, 120)
     }, 1500)
   },
@@ -66,7 +72,8 @@ Page({
     clearTimeout(this.exportDialogTimer)
     this.setData({
       showExportDialog: false,
-      showExportToast: false
+      showExportToast: false,
+      exportPreparing: false
     })
   },
 

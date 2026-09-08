@@ -19,7 +19,8 @@ Page({
     previewVisible: false,
     previewImage: '',
     showSaveSheet: false,
-    savingImage: false
+    savingImage: false,
+    deletingRecord: false
   },
 
   async onLoad(options) {
@@ -99,7 +100,7 @@ Page({
   },
 
   openDeleteDialog() {
-    if (!this.data.record) return
+    if (!this.data.record || this.data.deletingRecord) return
     track('record_delete_click', {
       record_id: this.data.record.id,
       record_type: this.data.record.typeKey
@@ -113,12 +114,15 @@ Page({
   },
 
   closeDeleteDialog() {
+    if (this.data.deletingRecord) return
     this.setData({ showDeleteDialog: false })
   },
 
   async confirmDelete() {
-    if (!this.data.record) return
+    if (!this.data.record || this.data.deletingRecord) return
     const record = this.data.record
+
+    this.setData({ deletingRecord: true })
 
     try {
       await moveRecordToTrash(record.id)
@@ -126,7 +130,10 @@ Page({
         record_id: record.id,
         record_type: record.typeKey
       })
-      this.setData({ showDeleteDialog: false })
+      this.setData({
+        showDeleteDialog: false,
+        deletingRecord: false
+      })
       wx.showToast({ title: '已删除', icon: 'none' })
       setTimeout(() => {
         if (this.from === 'contact_detail' && this.contactRecordCount === 1) {
@@ -137,6 +144,7 @@ Page({
         wx.navigateBack()
       }, 800)
     } catch (e) {
+      this.setData({ deletingRecord: false })
       wx.showToast({ title: '删除失败', icon: 'none' })
     }
   },

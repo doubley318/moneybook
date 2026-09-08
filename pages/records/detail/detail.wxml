@@ -134,7 +134,7 @@
       <view class="dialog-text">删除记录后，该条记录将移入回收站</view>
       <view class="dialog-actions">
         <view class="dialog-button cancel" bindtap="closeDeleteDialog">取消</view>
-        <view class="dialog-button confirm" bindtap="confirmDelete">确定</view>
+        <view class="dialog-button confirm {{deletingRecord ? 'disabled' : ''}}" bindtap="confirmDelete">确定</view>
       </view>
     </view>
   </view>
