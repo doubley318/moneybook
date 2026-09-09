@@ -191,6 +191,10 @@ page {
   box-sizing: border-box;
 }
 
+.submit-button.disabled {
+  opacity: 0.55;
+}
+
 .dialog-mask {
   position: fixed;
   left: 0;

@@ -12,7 +12,9 @@ Page({
     trashRecords: [],
     managing: false,
     selectedIds: [],
-    allSelected: false
+    allSelected: false,
+    restoring: false,
+    deleting: false
   },
 
   async onShow() {
@@ -67,6 +69,8 @@ Page({
   },
 
   async restoreSelected() {
+    if (this.data.restoring || this.data.deleting) return
+
     track('trash_restore_click')
 
     if (!this.data.selectedIds.length) {
@@ -75,6 +79,7 @@ Page({
     }
 
     const recordCount = this.data.selectedIds.length
+    this.setData({ restoring: true })
 
     try {
       await restoreRecordsFromTrash(this.data.selectedIds)
@@ -83,15 +88,18 @@ Page({
       })
 
       wx.showToast({ title: '已恢复', icon: 'none' })
-      this.setData({ managing: false, selectedIds: [], allSelected: false }, () => {
+      this.setData({ managing: false, selectedIds: [], allSelected: false, restoring: false }, () => {
         this.refreshTrashRecords()
       })
     } catch (e) {
+      this.setData({ restoring: false })
       wx.showToast({ title: '恢复失败', icon: 'none' })
     }
   },
 
   async deleteSelected() {
+    if (this.data.restoring || this.data.deleting) return
+
     track('trash_delete_click')
 
     if (!this.data.selectedIds.length) {
@@ -100,6 +108,7 @@ Page({
     }
 
     const recordCount = this.data.selectedIds.length
+    this.setData({ deleting: true })
 
     try {
       await deleteTrashRecords(this.data.selectedIds)
@@ -108,10 +117,11 @@ Page({
       })
 
       wx.showToast({ title: '已删除', icon: 'none' })
-      this.setData({ managing: false, selectedIds: [], allSelected: false }, () => {
+      this.setData({ managing: false, selectedIds: [], allSelected: false, deleting: false }, () => {
         this.refreshTrashRecords()
       })
     } catch (e) {
+      this.setData({ deleting: false })
       wx.showToast({ title: '删除失败', icon: 'none' })
     }
   }

@@ -165,3 +165,7 @@ page {
   color: #ffffff;
   background: #c52e2b;
 }
+
+.manage-action.disabled {
+  opacity: 0.55;
+}

@@ -118,7 +118,7 @@
         </view>
       </view>
 
-      <button class="save-btn" bindtap="saveRecord">保存</button>
+      <button class="save-btn" disabled="{{saving}}" bindtap="saveRecord">保存</button>
     </view>
   </scroll-view>
 

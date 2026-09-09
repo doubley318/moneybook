@@ -171,6 +171,30 @@ page {
   margin-bottom: 14rpx;
 }
 
+.contacts-empty-guide {
+  min-height: 260rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 152rpx 24rpx 28rpx;
+  box-sizing: border-box;
+}
+
+.contacts-empty-icon {
+  width: 82rpx;
+  height: 82rpx;
+  display: block;
+  margin-bottom: 18rpx;
+}
+
+.contacts-empty-text {
+  color: #9a948d;
+  font-size: 28rpx;
+  line-height: 42rpx;
+  text-align: center;
+}
+
 .contact-main {
   min-width: 0;
   display: flex;

@@ -300,8 +300,11 @@ Page({
       record_type: key
     })
 
-    wx.redirectTo({
-      url: `/pages/stats/stats?type=${key}`
+    this.setData({
+      activeCategory: key,
+      selectedYear: 'all',
+      chartFilterOpen: false,
+      stats: buildStats(key, 'all')
     })
   }
 })

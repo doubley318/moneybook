@@ -207,6 +207,7 @@ Page({
       remark: ''
     },
     saving: false,
+    choosingImage: false,
     images: [],
     calendarVisible: false,
     calendarPickerVisible: false,
@@ -469,8 +470,12 @@ Page({
   noop() {},
 
   chooseImage() {
+    if (this.data.choosingImage) return
+
     const remain = 3 - this.data.images.length
     if (remain <= 0) return
+
+    this.setData({ choosingImage: true })
 
     const onSuccess = (paths) => {
       this.setData({
@@ -483,7 +488,8 @@ Page({
         count: remain,
         mediaType: ['image'],
         sourceType: ['album', 'camera'],
-        success: (res) => onSuccess(res.tempFiles.map((item) => item.tempFilePath))
+        success: (res) => onSuccess(res.tempFiles.map((item) => item.tempFilePath)),
+        complete: () => this.setData({ choosingImage: false })
       })
       return
     }
@@ -491,7 +497,8 @@ Page({
     wx.chooseImage({
       count: remain,
       sourceType: ['album', 'camera'],
-      success: (res) => onSuccess(res.tempFilePaths)
+      success: (res) => onSuccess(res.tempFilePaths),
+      complete: () => this.setData({ choosingImage: false })
     })
   },
 

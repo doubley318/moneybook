@@ -14,7 +14,8 @@ Page({
     bouncingType: '',
     content: '',
     contentCount: 0,
-    showRequiredDialog: false
+    showRequiredDialog: false,
+    submitting: false
   },
 
   onShow() {
@@ -63,10 +64,14 @@ Page({
   },
 
   async submitFeedback() {
+    if (this.data.submitting) return
+
     if (!this.data.selectedType || !this.data.content.trim()) {
       this.setData({ showRequiredDialog: true })
       return
     }
+
+    this.setData({ submitting: true })
 
     try {
       await post('/feedback', {
@@ -76,6 +81,7 @@ Page({
       wx.showToast({ title: '提交反馈成功', icon: 'none', duration: 1500 })
       setTimeout(() => wx.navigateBack(), 1500)
     } catch (e) {
+      this.setData({ submitting: false })
       wx.showToast({ title: '提交失败，请重试', icon: 'none' })
     }
   },

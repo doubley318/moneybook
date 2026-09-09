@@ -58,6 +58,8 @@
             records="{{records}}"
             truncate-text="{{true}}"
             center-empty="{{true}}"
+            empty-text="点击「+」建立第一笔往来记录吧"
+            empty-icon="/assets/icons/empty-record-pencil.svg"
             bind:recordtap="goRecordDetail"
           ></record-group-list>
         </view>

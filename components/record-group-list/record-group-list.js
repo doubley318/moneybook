@@ -66,6 +66,14 @@ Component({
     hideArrow: {
       type: Boolean,
       value: false
+    },
+    emptyText: {
+      type: String,
+      value: '暂无记录'
+    },
+    emptyIcon: {
+      type: String,
+      value: ''
     }
   },
 

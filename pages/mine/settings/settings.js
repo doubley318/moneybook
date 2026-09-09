@@ -9,6 +9,7 @@ Page({
     showCancelAccountDialog: false,
     showCancelAccountSecondDialog: false,
     showCancelAccountSuccessDialog: false,
+    showCancelAccountToast: false,
     cancelingAccount: false,
     sections: [
       {
@@ -105,13 +106,8 @@ Page({
 
     this.setData({
       cancelingAccount: true,
-      showCancelAccountSecondDialog: false
-    }, () => {
-      wx.showToast({
-        title: '账号正在注销...',
-        icon: 'none',
-        duration: 1200
-      })
+      showCancelAccountSecondDialog: false,
+      showCancelAccountToast: true
     })
 
     try {
@@ -121,6 +117,7 @@ Page({
 
       setTimeout(() => {
         this.setData({
+          showCancelAccountToast: false,
           cancelingAccount: false,
           showCancelAccountSuccessDialog: true
         })
@@ -128,6 +125,7 @@ Page({
     } catch (error) {
       console.error('cancel account failed', error)
       this.setData({
+        showCancelAccountToast: false,
         cancelingAccount: false
       })
       wx.showToast({

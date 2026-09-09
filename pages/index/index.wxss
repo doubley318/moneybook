@@ -151,7 +151,7 @@ page {
 .records-card {
   margin-top: 28rpx;
   margin-bottom: 28rpx;
-  padding: 34rpx 32rpx 12rpx;
+  padding: 34rpx 32rpx 26rpx;
 }
 
 .records-head {
@@ -163,7 +163,7 @@ page {
 }
 
 .recent-list.empty {
-  min-height: 220rpx;
+  min-height: 340rpx;
   display: flex;
   align-items: center;
   justify-content: center;
