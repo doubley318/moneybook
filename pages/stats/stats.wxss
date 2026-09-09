@@ -67,7 +67,7 @@ page {
 }
 
 .stats-content {
-  padding: 42rpx 30rpx calc(156rpx + env(safe-area-inset-bottom));
+  padding: 42rpx 30rpx calc(94px + 28rpx + env(safe-area-inset-bottom));
   box-sizing: border-box;
 }
 
